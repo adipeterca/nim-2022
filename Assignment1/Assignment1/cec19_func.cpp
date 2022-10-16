@@ -15,7 +15,6 @@
 #include <malloc.h>
 #include "cec19_func.h"
 #pragma warning(disable:4996)
-//#include <mex.h>
 
 #define INF 1.0e99
 #define EPS 1.0e-14
@@ -25,37 +24,14 @@
 double* OShift, * M, * y, * z, * x_bound;
 int ini_flag = 0, n_flag, func_flag, * SS;
 
-
-//void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
-//{
-//	int  m, n, func_num;
-//	double* f, * x;
-//	if ((nrhs < 2) || (nlhs < 1))
-//	{
-//		mexPrintf("usage: f = cec19_func(x, func_num);\n");
-//		mexErrMsgTxt("example: f= cec19_func([3.3253000e+000, -1.2835000e+000]', 1);");
-//	}
-//	n = mxGetM(prhs[0]);
-//	if (!(n == 2 || n == 10 || n == 9 || n == 16 || n == 18))
-//	{
-//		mexPrintf("usage: f = cec19_func(x, func_num);\n");
-//		mexErrMsgTxt("Error: Test functions are only defined for D=10, 9, 16, 18 \n F1 is defined on D=9 \n F2 is defined on D=16 \n F3 is defined on D=18 \n F4-F10 are defined on D=10.");
-//	}
-//	m = mxGetN(prhs[0]);
-//	x = mxGetPr(prhs[0]);
-//	func_num = (int)*mxGetPr(prhs[1]);
-//	if (func_num > 10)
-//	{
-//		mexPrintf("usage: f = cec17_func(x, func_num);\n");
-//		mexErrMsgTxt("Error: There are only 10 test functions in this test suite!");
-//	}
-//
-//	plhs[0] = mxCreateDoubleMatrix(1, m, mxREAL);
-//	f = mxGetPr(plhs[0]);
-//	cec19_test_func(&x[0], &f[0], n, m, func_num);
-//}
-
-
+/// <summary>
+/// Evaluate a given set of points for a given function.
+/// </summary>
+/// <param name="x">list of points</param>
+/// <param name="f">return value (or function value)</param>
+/// <param name="nx">number of dimensions</param>
+/// <param name="mx">how many points are there in the list (usually 1)</param>
+/// <param name="func_num">which function to evaluate (from 1 to 10)</param>
 void cec19_test_func(double* x, double* f, int nx, int mx, int func_num)
 {
 	int cf_num = 10, i, j;
@@ -190,7 +166,7 @@ void cec19_test_func(double* x, double* f, int nx, int mx, int func_num)
 			f[i] += 1.0;
 			break;
 		default:
-			printf("\nError: There are only 30 test functions in this test suite!\n");
+			printf("\nError: There are only 10 test functions in this test suite!\n");
 			f[i] = 0.0;
 			break;
 		}
@@ -622,10 +598,10 @@ void Chebyshev(double* x, int D, double* f)  // Storn's Tchebychev - a 2nd ICEO 
 	{
 		px = x[0];
 		for (j = 1; j < D; j++)
-		{
 			px = y * px + x[j];
-		}
-		if (px < -1 || px > 1) sum += (1. - fabs(px)) * (1. - fabs(px));
+
+		if (px < -1 || px > 1) 
+			sum += (1. - fabs(px)) * (1. - fabs(px));
 		y += dy;
 	}
 
@@ -633,11 +609,10 @@ void Chebyshev(double* x, int D, double* f)  // Storn's Tchebychev - a 2nd ICEO 
 	{
 		px = x[0];
 		for (j = 1; j < D; j++)
-		{
 			px = 1.2 * px + x[j];
-		}
 
-		if (px < dx) sum += px * px;
+		if (px < dx) 
+			sum += px * px;
 	}
 
 	f[0] += sum;

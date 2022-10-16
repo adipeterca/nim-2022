@@ -1,79 +1,81 @@
-/*
-  CEC19 Test Function Suite for Single Objective Optimization
-  Noor Awad (email: noorawad1989@gmail.com)
-  Sep. 21th 2018
-*/
-
-#include <WINDOWS.H>    
-#include <stdio.h>
 #include <math.h>
-#include <malloc.h>
 #include "cec19_func.h"
 #pragma warning(disable:4996)
 
-
-//void cec17_test_func(double*, double*, int, int, int);
+// C++ migration
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <iomanip>
 
 extern double* OShift, * M, * y, * z, * x_bound;
 extern int ini_flag, n_flag, func_flag, * SS;
 
 
-void main()
+int main()
 {
-	int i, j, k, n, m, func_num;
-	double* f, * x;
-	FILE* fpt;
-	char FileName[100];
-	m = 2;
-	n = 10;
-	x = (double*)malloc(m * n * sizeof(double));
-	f = (double*)malloc(sizeof(double) * m);
-	for (i = 0; i < 10; i++)
+	// Settings for cout
+	std::cout << std::fixed << std::showpoint;
+	std::cout << std::setprecision(5);
+
+	// Ranges from 1 to 10
+	int currentFunction;
+
+	const auto n = 10;
+	const auto m = 2;
+
+	double* x = new double[m * n * sizeof(double)];
+	double* f = new double[m * sizeof(double)];
+
+	std::ifstream fin;
+	std::string filename;
+
+	for (int i = 3; i < 4; i++)
 	{
-		func_num = i + 1;
-		sprintf(FileName, "input_data/shift_data_%d.txt", func_num);
-		fpt = fopen(FileName, "r");
-		if (fpt == NULL)
+		currentFunction = i + 1;
+		filename = "input_data/shift_data_" + std::to_string(currentFunction) + ".txt";
+		fin.open(filename);
+		if (!fin)
 		{
-			printf("\n Error: Cannot open input file for reading \n");
+			std::cout << "Error: Cannot open input file for reading: " + filename + "\n";
+			return -1;
 		}
 
-		if (x == NULL)
-			printf("\nError: there is insufficient memory available!\n");
-
-		for (k = 0; k < n; k++)
+		// x - vector for shift_data
+		for (int k = 0; k < n; k++)
 		{
-			fscanf(fpt, "%Lf", &x[k]);
-			printf("%Lf\n",x[k]);
+			fin >> x[k];
+			std::cout << "Read for shift_data: " << x[k] << std::endl;
 		}
 
-		fclose(fpt);
+		fin.close();
 
-		for (j = 0; j < n; j++)
+		for (int j = 0; j < n; j++)
 		{
-			x[1 * n + j] = 0.0;
-			printf("%Lf\n",x[1*n+j]);
+			// why is it 1*n?
+			// LE: we skip pass the first N numbers because we already read them ^
+			//x[1 * n + j] = 0.0;
+			//printf("%Lf\n",x[1*n+j]);
+
+			x[n + j] = 0.0;
+			std::cout << "second for: " << x[n + j] << std::endl;
 		}
 
-
-		for (k = 0; k < 1; k++)
+		// Why k=0,1?
+		for (int k = 0; k < 1; k++)
 		{
-			cec19_test_func(x, f, n, m, func_num);
-			for (j = 0; j < 2; j++)
+
+			cec19_test_func(x, f, n, m, currentFunction);
+			for (int j = 0; j < 2; j++)
 			{
-				printf(" f%d(x[%d]) = %Lf,", func_num, j + 1, f[j]);
+				printf(" f%d(x[%d]) = %Lf,", currentFunction, j + 1, f[j]);
 			}
-			printf("\n");
+			std::cout << std::endl;
 		}
 
 	}
-	free(x);
-	free(f);
-	free(y);
-	free(z);
-	free(M);
-	free(OShift);
-	free(x_bound);
+
+	return 0;
 }
 
 
