@@ -129,9 +129,18 @@
   <ItemGroup>
     <ClCompile Include="Assignment1.cpp" />
     <ClCompile Include="cec19_func.cpp" />
+    <ClCompile Include="Function.cpp" />
+    <ClCompile Include="Individual.cpp" />
+    <ClCompile Include="Random.cpp" />
+    <ClCompile Include="SDE.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cec19_func.h" />
+    <ClInclude Include="Function.h" />
+    <ClInclude Include="Individual.h" />
+    <ClInclude Include="Random.h" />
+    <ClInclude Include="SDE.h" />
+    <ClInclude Include="Generator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

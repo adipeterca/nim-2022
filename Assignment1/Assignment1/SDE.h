@@ -3,7 +3,7 @@
 #include <tuple>
 #include "Individual.h"
 #include "Function.h"
-#include "Utils.h"
+#include "Random.h"
 
 
 using namespace std;
@@ -28,18 +28,35 @@ private:
 		}
 	}
 
-	tuple<int, int, int> sample(int index) {
+	/// <summary>
+	/// Generates three random distinct positions from population vector with first != second != third != index
+	/// </summary>
+	/// <param name="index">index</param>
+	/// <returns>tuple containing positions</returns>
+	tuple<int, int, int> generateIndexes(int index) {
 		int first, second, third;
 		do {
-			first = getRandomInteger(0, POP_SIZE);
-		} while (first != index);
+			first = Random::getRandomInteger(0, POP_SIZE);
+		} while (first == index);
 		do {
-			second = getRandomInteger(0, POP_SIZE);
-		} while (second != index && second != first);
+			second = Random::getRandomInteger(0, POP_SIZE);
+		} while (second == index || second == first);
 		do {
-			third = getRandomInteger(0, POP_SIZE);
-		} while (third != index && third != first && third != second);
+			third = Random::getRandomInteger(0, POP_SIZE);
+		} while (third == index || third == first || third == second);
 		return make_tuple(first, second, third);
+	}
+
+	/// <summary>
+	/// Passes as reference three random distinct positions from population vector with first != second != third != index
+	/// </summary>
+	/// <param name="index">index</param>
+	/// <param name="first">first position</param>
+	/// <param name="seccond">second position</param>
+	/// <param name="third">third position</param>
+	void sample(int index, int& first, int& seccond, int& third) {
+		tuple<double, double, double> x = generateIndexes(index);
+		tie(first, seccond, third) = x;
 	}
 
 public:
@@ -62,13 +79,14 @@ public:
 	/// Runs SDE using specified parameters
 	/// </summary>
 	void run() {
+		int first, second, third;
 		initializePopulation();
 		for (int CFES = 0; CFES < MAXFES; CFES += POP_SIZE) {
 			for (int i = 0; i < POP_SIZE; ++i) {
-				tuple<double, double, double> x = sample(i);
-				int first, second, third;
-				tie(first, second, third) = x;
+				//sampling
+				sample(i, first, second, third);
 				//mutation
+				Individual v = population[first] - (population[second] - population[third]) * MUTATION_FACTOR;
 				//crossOver
 				//evaluate
 			}
