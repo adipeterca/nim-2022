@@ -1,5 +1,6 @@
 #pragma once
 #include "cec19_func.h"
+#include <string>
 
 /// <summary>
 /// Contains all data needed for a function
@@ -9,6 +10,7 @@ class Function
 private:
 	int id, dimensions;
 	double min, max;
+	std::string name;
 public:
 	/// <summary>
 	/// Function constructor
@@ -17,32 +19,21 @@ public:
 	/// <param name="D">number of dimensions</param>
 	/// <param name="min">function minima</param>
 	/// <param name="max">function maxima</param>
-	Function(int id, int D, double min, double max) {
-		this->id = id;
-		this->dimensions = D;
-		this->min = min;
-		this->max = max;
-	}
+	Function(const char * name, int id, int D, double min, double max);
 
 	/// <summary>
-	/// calls function on input
+	/// Calls function on input
 	/// </summary>
 	/// <param name="x">x coordinates</param>
-	/// <param name="f">result of f(x)</param>
-	void operator ()(double* x, double* f) {
-		cec19_test_func(x, f, dimensions, 1, id);
-	}
+	/// <returns>f(x) (function value)</returns>
+	double operator ()(double* x);
 
-	int getDimensions() {
-		return dimensions;
-	}
+	int getDimensions();
 
-	double getMin() {
-		return min;
-	}
+	double getMin();
 
-	double getMax() {
-		return max;
-	}
+	double getMax();
+
+	std::string& getName();
 };
 

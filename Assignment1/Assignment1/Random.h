@@ -1,27 +1,30 @@
 #pragma once
-#include <random>
 #include <chrono>
-#include "Generator.h"
+#include <random>
 
 using namespace std;
 
+/// <summary>
+/// Class for retrieving random numbers.
+/// </summary>
 class Random
 {
+	mt19937 generator;
 public:
+
+	/// <summary>
+	/// Default constructor which sets the interval number generator.
+	/// Is it thread safe tho?
+	/// </summary>
+	Random();
+
 	/// <summary>
 	/// Generate a random double number using a uniform distribution inside an interval
 	/// </summary>
 	/// <param name="min">interval lowest value</param>
 	/// <param name="max">interval highest value</param>
 	/// <returns>random double number</returns>
-	static double getRandomDouble(double min, double max) {
-		int chrono_seed = chrono::system_clock::now().time_since_epoch().count();
-		mt19937 mt(chrono_seed);
-		int seed = mt();
-		mt19937 generator(seed);
-		uniform_real_distribution<> distribution(min, max);
-		return distribution(generator);
-	}
+	double getRandomDouble(double min, double max);
 
 	/// <summary>
 	/// Generate a random integer number using a uniform distribution inside an interval
@@ -29,13 +32,6 @@ public:
 	/// <param name="min">interval lowest value</param>
 	/// <param name="max">interval highest value</param>
 	/// <returns>random integer number</returns>
-	static int getRandomInteger(int min, int max) {
-		int chrono_seed = chrono::system_clock::now().time_since_epoch().count();
-		mt19937 mt(chrono_seed);
-		int seed = mt();
-		mt19937 generator(seed);
-		uniform_int_distribution<> distribution(min, max);
-		return distribution(generator);
-	}
+	int getRandomInteger(int min, int max);
 };
 
