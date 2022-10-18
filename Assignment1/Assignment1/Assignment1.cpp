@@ -36,7 +36,7 @@ int main()
 	// than it is to the choice of CR. The study suggests
 	// the values of [0.5, 1] for F, [0.8, 1] for CR and 10D
 	// for NP, where D is the number of dimensions of the problem
-	SDE sde = SDE(100, 5000, 0.75, 0.9, functions[3]);
+	SDE sde = SDE(500, 25000, 0.8, 0.2, functions[3]);
 	sde.run();
 
 	return 0;

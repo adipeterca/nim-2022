@@ -3,6 +3,7 @@
 #include <tuple>
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include "Individual.h"
 #include "Function.h"
 #include "Random.h"
