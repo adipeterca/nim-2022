@@ -9,15 +9,15 @@ class Individual
 private:
 	vector<double> x;
 
+public:
 	/// <summary>
-	/// Private constructor
+	/// Constructor for non-random initialization
 	/// </summary>
 	/// <param name="x">point coordinates</param>
 	Individual(vector<double> x) {
 		this->x = x;
 	}
 
-public:
 	/// <summary>
 	/// Constructor for randomly initialized point representing an individual
 	/// </summary>
