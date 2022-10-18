@@ -21,9 +21,36 @@
     <ClCompile Include="cec19_func.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SDE.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Individual.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Function.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cec19_func.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SDE.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Individual.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Generator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

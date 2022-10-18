@@ -1,5 +1,6 @@
 #include <math.h>
 #include "cec19_func.h"
+#include "SDE.h"
 #pragma warning(disable:4996)
 
 // C++ migration
@@ -76,11 +77,14 @@ void testFunction(int currentFunction =4)
 int main()
 {
 	// Settings for cout
-	std::cout << std::fixed << std::showpoint;
-	std::cout << std::setprecision(5);
+	//std::cout << std::fixed << std::showpoint;
+	//std::cout << std::setprecision(5);
 
-	testValue();
-	testFunction();
+	//testValue();
+	//testFunction();
+	Function rastrigin = Function(4, 10, -100, 100);
+	SDE sde = SDE(100, 100, 1.0, 0.5, rastrigin);
+	sde.run();
 
 	return 0;
 }
