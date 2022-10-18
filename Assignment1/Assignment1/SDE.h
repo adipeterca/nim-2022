@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <tuple>
+#include <algorithm>
 #include "Individual.h"
 #include "Function.h"
 #include "Random.h"
@@ -33,7 +34,7 @@ private:
 	/// </summary>
 	/// <param name="index">index</param>
 	/// <returns>tuple containing positions</returns>
-	tuple<int, int, int> generateIndexes(int index) {
+	tuple<int, int, int> generateIndexes(int& index) {
 		int first, second, third;
 		do {
 			first = Random::getRandomInteger(0, POP_SIZE);
@@ -52,11 +53,61 @@ private:
 	/// </summary>
 	/// <param name="index">index</param>
 	/// <param name="first">first position</param>
-	/// <param name="seccond">second position</param>
+	/// <param name="second">second position</param>
 	/// <param name="third">third position</param>
-	void sample(int index, int& first, int& seccond, int& third) {
+	void sample(int index, int& first, int& second, int& third) {
 		tuple<double, double, double> x = generateIndexes(index);
-		tie(first, seccond, third) = x;
+		tie(first, second, third) = x;
+	}
+
+	/// <summary>
+	/// Generates individual using a mutation scheme
+	/// </summary>
+	/// <param name="first">first individual</param>
+	/// <param name="second">second individual</param>
+	/// <param name="third">third individual</param>
+	/// <returns>new individual</returns>
+	Individual mutation(int& first, int& second, int& third) {
+		return population[first] - (population[second] - population[third]) * MUTATION_FACTOR;
+	}
+
+	/// <summary>
+	/// Generates a vector of individuals using a cross-over scheme
+	/// </summary>
+	/// <param name="v">donor vector</param>
+	/// <returns>vector of individuals</returns>
+	vector<Individual> crossOver(Individual& v) {
+		int D = function.getDimensions();
+		vector<Individual> u;
+		vector<double> result(D);
+		for (int i = 0; i < POP_SIZE; ++i) {
+			int jRand = Random::getRandomInteger(0, D);
+			for (int j = 0; j < D; ++j) {
+				if (j == jRand || Random::getRandomDouble(0, 1) <= CROSS_OVER) {
+					result[j] = v.get(j);
+				}
+				else {
+					result[j] = population[i].get(j);
+				}
+			}
+			u.push_back(Individual(result));
+		}
+		return u;
+	}
+
+	/// <summary>
+	/// Compares vector of individuals to existing population element-wise
+	/// </summary>
+	/// <param name="u">vector of individuals</param>
+	void evaluate(vector<Individual>& u) {
+		double uReturnValue, xReturnValue;
+		for (int i = 0; i < POP_SIZE; ++i) {
+			function(u[i].get(), &uReturnValue);
+			function(population[i].get(), &xReturnValue);
+			if (uReturnValue < xReturnValue) {
+				population[i] = u[i];
+			}
+		}
 	}
 
 public:
@@ -86,12 +137,13 @@ public:
 				//sampling
 				sample(i, first, second, third);
 				//mutation
-				Individual v = population[first] - (population[second] - population[third]) * MUTATION_FACTOR;
-				//crossOver
+				Individual v = mutation(first, second, third);
+				//crossover
+				vector<Individual> u = crossOver(v);
 				//evaluate
+				evaluate(u);
 			}
 		}
 	}
-
 };
 
