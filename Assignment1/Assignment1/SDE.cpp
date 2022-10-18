@@ -8,7 +8,7 @@ void SDE::initializePopulation() {
 	}
 }
 
-tuple<int, int, int>  SDE::generateIndexes(const int& index) {
+const tuple<int, int, int>  SDE::generateIndexes(const int& index) {
 	int first, second, third;
 	do {
 		first = rng.getRandomInteger(0, POP_SIZE - 1);
@@ -22,16 +22,16 @@ tuple<int, int, int>  SDE::generateIndexes(const int& index) {
 	return make_tuple(first, second, third);
 }
 
-void SDE::sample(int index, int& first, int& second, int& third) {
+void SDE::sample(const int &index, int& first, int& second, int& third) {
 	tuple<double, double, double> x = generateIndexes(index);
 	tie(first, second, third) = x;
 }
 
-Individual SDE::mutation(int& first, int& second, int& third) {
+const Individual SDE::mutation(const int& first, const int& second, const int& third) {
 	return population[first] - (population[second] - population[third]) * MUTATION_FACTOR;
 }
 
-vector<Individual> SDE::crossOver(Individual& v) {
+vector<Individual> SDE::crossOver(const Individual& v) {
 	int D = function.getDimensions();
 	vector<Individual> u;
 	vector<double> result(D);
@@ -56,16 +56,12 @@ void SDE::evaluate(vector<Individual>& u) {
 		
 		if (function(u[i].get()) < function(population[i].get())) {
 			population[i] = u[i];
+			cout << "Found better" << '\n';
 		}
 	}
 }
 
-SDE::SDE(int NP, int MAXFES, double F, double CR, Function& function) : function(function) {
-	this->POP_SIZE = NP;
-	this->MAXFES = MAXFES;
-	this->MUTATION_FACTOR = F;
-	this->CROSS_OVER = CR;
-}
+SDE::SDE(const int &NP, const int &MAXFES, const double &F, const double &CR, Function& function) : POP_SIZE(NP), MAXFES(MAXFES), MUTATION_FACTOR(F), CROSS_OVER(CR), function(function) {}
 
 void SDE::run() {
 	int first, second, third;
@@ -78,9 +74,11 @@ void SDE::run() {
 			Individual v = mutation(first, second, third);
 
 			vector<Individual> u = crossOver(v);
-
 			evaluate(u);
 		}
+		cout << "==================================" << '\n';
+		cout << "Current iteration " << CFES << '\n';
+		cout << "==================================" << '\n';
 	}
 
 	// Compute best from this run
@@ -90,10 +88,9 @@ void SDE::run() {
 			bestIndex = i;
 		}
 	}
-	std::cout << "SDE Results for function " << function.getName() << " :\n";
-	std::cout << "Dimensions: " << function.getDimensions() << "\n";
-	std::cout << "Interval: [" << function.getMin() << ", " << function.getMax() << "]\n";
-	std::cout << "x = " << population[bestIndex] << "\n";
-	std::cout << "Value for f(x) = " << function(population[bestIndex].get()) << "\n";
-
+	cout << "SDE Results for function " << function.getName() << " :\n";
+	cout << "Dimensions: " << function.getDimensions() << "\n";
+	cout << "Interval: [" << function.getMin() << ", " << function.getMax() << "]\n";
+	cout << "x = " << population[bestIndex] << "\n";
+	cout << "Value for f(x) = " << function(population[bestIndex].get()) << "\n";
 }

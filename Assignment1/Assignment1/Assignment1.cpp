@@ -1,23 +1,24 @@
 #include <math.h>
-#include "cec19_func.h"
-#include "SDE.h"
-#pragma warning(disable:4996)
-
-extern double* OShift, * M, * y, * z, * x_bound;
-extern int ini_flag, n_flag, func_flag, * SS;
-
 // C++ migration
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <iomanip>
+#include "cec19_func.h"
+#include "SDE.h"
+#pragma warning(disable:4996)
+
+using namespace std;
+
+extern double* OShift, * M, * y, * z, * x_bound;
+extern int ini_flag, n_flag, func_flag, * SS;
 
 int main()
 {
 	// Settings for cout
-	std::cout << std::fixed << std::showpoint << std::setprecision(10);
+	cout << fixed << showpoint << setprecision(10);
 
-	std::vector<Function> functions;
+	vector<Function> functions;
 	functions.push_back(Function("Chebyshev", 1, 9, -8192, 8192));
 	functions.push_back(Function("Hilbert", 2, 16, -16384, 16384));
 	functions.push_back(Function("Lennard Jones", 3, 18, -4, 4));
@@ -30,7 +31,12 @@ int main()
 	functions.push_back(Function("Ackely", 10, 10, -100, 100));
 
 	// Function[3] means rastrigin, just a heads up
-	SDE sde = SDE(100, 100, 1.0, 0.5, functions[3]);
+	// According to Storn and Price (1997),
+	// DE behavior is more sensitive to the choice of F
+	// than it is to the choice of CR. The study suggests
+	// the values of [0.5, 1] for F, [0.8, 1] for CR and 10D
+	// for NP, where D is the number of dimensions of the problem
+	SDE sde = SDE(100, 5000, 0.75, 0.9, functions[3]);
 	sde.run();
 
 	return 0;

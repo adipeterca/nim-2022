@@ -6,12 +6,12 @@ Random::Random() {
 	generator.seed(generator());
 }
 
-double Random::getRandomDouble(double min, double max) {
+double Random::getRandomDouble(const double &min, const double &max) {
 	uniform_real_distribution<> distribution(min, max);
 	return distribution(generator);
 }
 
-int Random::getRandomInteger(int min, int max) {
+int Random::getRandomInteger(const int &min, const int &max) {
 	uniform_int_distribution<> distribution(min, max);
 	return distribution(generator);
 }

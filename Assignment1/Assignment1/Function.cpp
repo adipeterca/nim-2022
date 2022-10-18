@@ -1,31 +1,27 @@
 #include "Function.h"
 
-Function::Function(const char* name, int id, int D, double min, double max) {
+Function::Function(const char* name, const int &id, const int &D, const double &min, const double &max) : name(name), id(id), dimensions(D), min(min), max(max) {
 	this->name = name;
-	this->id = id;
-	this->dimensions = D;
-	this->min = min;
-	this->max = max;
 }
 
-double Function::operator ()(double* x) {
+const double Function::operator ()(const double* x) {
 	double* returnValue = new double;
-	cec19_test_func(x, returnValue, dimensions, 1, id);
+	cec19_test_func((double* )x, returnValue, dimensions, 1, id);
 	return *returnValue;
 }
 
-int Function::getDimensions() {
+const int Function::getDimensions() {
 	return dimensions;
 }
 
-double Function::getMin() {
+const double Function::getMin() {
 	return min;
 }
 
-double Function::getMax() {
+const double Function::getMax() {
 	return max;
 }
 
-std::string& Function::getName() {
+string& Function::getName() {
 	return name;
 }

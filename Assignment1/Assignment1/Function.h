@@ -2,15 +2,17 @@
 #include "cec19_func.h"
 #include <string>
 
+using namespace std;
+
 /// <summary>
 /// Contains all data needed for a function
 /// </summary>
 class Function
 {
 private:
-	int id, dimensions;
-	double min, max;
-	std::string name;
+	const int id, dimensions;
+	const double min, max;
+	string name;
 public:
 	/// <summary>
 	/// Function constructor
@@ -19,21 +21,21 @@ public:
 	/// <param name="D">number of dimensions</param>
 	/// <param name="min">function minima</param>
 	/// <param name="max">function maxima</param>
-	Function(const char * name, int id, int D, double min, double max);
+	Function(const char * name, const int &id, const int &D, const double &min, const double &max);
 
 	/// <summary>
 	/// Calls function on input
 	/// </summary>
 	/// <param name="x">x coordinates</param>
 	/// <returns>f(x) (function value)</returns>
-	double operator ()(double* x);
+	const double operator ()(const double* x);
 
-	int getDimensions();
+	const int getDimensions();
 
-	double getMin();
+	const double getMin();
 
-	double getMax();
+	const double getMax();
 
-	std::string& getName();
+	string& getName();
 };
 

@@ -28,35 +28,35 @@ public:
 
 	double* get();
 
-	double operator[](int index);
+	const double operator[](const int &index) const;
 
 	/// <summary>
 	/// Computes element-wise difference between two individuals
 	/// </summary>
 	/// <param name="other">other individual</param>
 	/// <returns>new individual</returns>
-	Individual operator-(Individual other);
+	const Individual operator-(const Individual &other) const;
 
 	/// <summary>
 	/// Computes element-wise sum between two individuals
 	/// </summary>
 	/// <param name="other">other individual</param>
 	/// <returns>new individual</returns>
-	Individual operator+(Individual other);
+	const Individual operator+(const Individual &other) const;
 
 	/// <summary>
 	/// Computes element-wise multiplication with a factor
 	/// </summary>
 	/// <param name="other">factor</param>
 	/// <returns>new individual</returns>
-	Individual operator*(double factor);
+	const Individual operator*(const double &factor) const;
 
 	/// <summary>
 	/// Default printing method to console output.
 	/// </summary>
-	/// <param name="os">usually std::cout, the output stream.</param>
+	/// <param name="os">usually cout, the output stream.</param>
 	/// <param name="individual">the object to be printed</param>
 	/// <returns>a stream representation of the given object</returns>
-	friend std::ostream& operator<<(std::ostream& os, Individual const& individual);
+	friend ostream& operator<<(ostream& os, const Individual &individual);
 };
 

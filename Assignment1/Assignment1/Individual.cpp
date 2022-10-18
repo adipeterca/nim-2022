@@ -4,7 +4,7 @@ Individual::Individual(vector<double>& x) {
 	this->x = x;
 }
 
-Individual::Individual(Function& function, Random& rng) {
+Individual::Individual(Function &function, Random &rng) {
 	for (int i = 0; i < function.getDimensions(); ++i) {
 		x.push_back(rng.getRandomDouble(function.getMin(), function.getMax()));
 	}
@@ -14,37 +14,37 @@ double* Individual::get() {
 	return x.data(); // doesnt work for bool
 }
 
-double Individual::operator[](int index) {
+const double Individual::operator[](const int &index) const {
 	return x[index];
 }
 
-Individual Individual::operator-(Individual other) {
+const Individual Individual::operator-(const Individual &other) const {
 
 	if (other.x.size() != x.size()) {
-		throw std::exception("Individuals don't have the same size for element-wise difference.");
+		throw exception("Individuals don't have the same size for element-wise difference.");
 	}
 
 	vector<double> diff;
 	for (int i = 0; i < x.size(); ++i) {
-		diff.push_back(x[i] - other[i]);
+		diff.push_back(x[i] - other.x[i]);
 	}
 	return Individual(diff);
 }
 
-Individual Individual::operator+(Individual other) {
+const Individual Individual::operator+(const Individual &other) const {
 
 	if (other.x.size() != x.size()) {
-		throw std::exception("Individuals don't have the same size for element-wise sum.");
+		throw exception("Individuals don't have the same size for element-wise sum.");
 	}
 
 	vector<double> sum;
 	for (int i = 0; i < x.size(); ++i) {
-		sum.push_back(x[i] + other[i]);
+		sum.push_back(x[i] + other.x[i]);
 	}
 	return Individual(sum);
 }
 
-Individual Individual::operator*(double factor) {
+const Individual Individual::operator*(const double &factor) const {
 	vector<double> result;
 	for (int i = 0; i < x.size(); ++i) {
 		result.push_back(x[i] * factor);
@@ -52,7 +52,7 @@ Individual Individual::operator*(double factor) {
 	return Individual(result);
 }
 
-std::ostream& operator<<(std::ostream& os, Individual const& individual) {
+ostream& operator<<(ostream& os, Individual const& individual) {
 	os << "[";
 	for (int i = 0; i < individual.x.size(); ++i) {
 		if (i + 1 != individual.x.size())

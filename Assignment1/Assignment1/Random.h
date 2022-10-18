@@ -24,7 +24,7 @@ public:
 	/// <param name="min">interval lowest value</param>
 	/// <param name="max">interval highest value</param>
 	/// <returns>random double number</returns>
-	double getRandomDouble(double min, double max);
+	double getRandomDouble(const double &min, const double &max);
 
 	/// <summary>
 	/// Generate a random integer number using a uniform distribution inside an interval
@@ -32,6 +32,6 @@ public:
 	/// <param name="min">interval lowest value</param>
 	/// <param name="max">interval highest value</param>
 	/// <returns>random integer number</returns>
-	int getRandomInteger(int min, int max);
+	int getRandomInteger(const int &min, const int &max);
 };
 
