@@ -56,7 +56,7 @@ void SDE::evaluate(vector<Individual>& u) {
 		
 		if (function(u[i].get()) < function(population[i].get())) {
 			population[i] = u[i];
-			cout << "Found better" << '\n';
+			// cout << "Found better" << '\n';
 		}
 	}
 }
@@ -67,6 +67,10 @@ void SDE::run() {
 	int first, second, third;
 	initializePopulation();
 	for (int CFES = 0; CFES < MAXFES; CFES += POP_SIZE) {
+		
+		if (CFES % 1000 == 0) {
+			cout << "Current iteration " << setw(10) << CFES << "/" << MAXFES << '\n';
+		}
 		for (int i = 0; i < POP_SIZE; ++i) {
 
 			sample(i, first, second, third);
@@ -76,21 +80,33 @@ void SDE::run() {
 			vector<Individual> u = crossOver(v);
 			evaluate(u);
 		}
-		cout << "==================================" << '\n';
-		cout << "Current iteration " << CFES << '\n';
-		cout << "==================================" << '\n';
 	}
 
 	// Compute best from this run
 	int bestIndex = 0;
+	double currentValue;
+	double lowestValue = function(population[bestIndex].get()); // Best individual is the one with the lowest function value
+	double highestValue = lowestValue; // Worst individual is the one with the highest function value
+	double avgValue = lowestValue;
+
 	for (int i = 1; i < POP_SIZE; ++i) {
-		if (function(population[bestIndex].get()) < function(population[i].get())) {
+		currentValue = function(population[i].get());
+		avgValue += currentValue;
+		if (lowestValue > currentValue) {
 			bestIndex = i;
+			lowestValue = currentValue;
+		}
+		if (highestValue < currentValue) {
+			highestValue = currentValue;
 		}
 	}
+	avgValue = avgValue / POP_SIZE;
+
 	cout << "SDE Results for function " << function.getName() << " :\n";
 	cout << "Dimensions: " << function.getDimensions() << "\n";
 	cout << "Interval: [" << function.getMin() << ", " << function.getMax() << "]\n";
-	cout << "x = " << population[bestIndex] << "\n";
-	cout << "Value for f(x) = " << function(population[bestIndex].get()) << "\n";
+	cout << "Lowest point coordinates (x) = " << population[bestIndex] << "\n";
+	cout << "Lowest value for f(x) = " << lowestValue << "\n";
+	cout << "Highest value for f(x) = " << highestValue << "\n";
+	cout << "Average value for f(x) = " << avgValue << "\n";
 }
