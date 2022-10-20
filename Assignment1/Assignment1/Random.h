@@ -32,6 +32,6 @@ public:
 	/// <param name="min">interval lowest value</param>
 	/// <param name="max">interval highest value</param>
 	/// <returns>random integer number</returns>
-	int getRandomInteger(const int &min, const int &max);
+	int getRandomUnsigned(const unsigned &min, const unsigned &max);
 };
 

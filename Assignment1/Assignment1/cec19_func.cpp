@@ -176,7 +176,7 @@ void cec19_test_func(double* x, double* f, int nx, int mx, int func_num)
 }
 
 
-void schaffer_F7_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Schwefel's 1.2  */
+inline void schaffer_F7_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Schwefel's 1.2  */
 {
 	int i;
 	double tmp;
@@ -191,7 +191,7 @@ void schaffer_F7_func(double* x, double* f, int nx, double* Os, double* Mr, int 
 	f[0] = f[0] * f[0] / (nx - 1) / (nx - 1);
 }
 
-void griewank_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Griewank's  */
+inline void griewank_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Griewank's  */
 {
 	int i;
 	double s, p;
@@ -208,7 +208,7 @@ void griewank_func(double* x, double* f, int nx, double* Os, double* Mr, int s_f
 	f[0] = 1.0 + s / 4000.0 - p;
 }
 
-void ackley_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Ackley's  */
+inline void ackley_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Ackley's  */
 {
 	int i;
 	double sum1, sum2;
@@ -227,7 +227,7 @@ void ackley_func(double* x, double* f, int nx, double* Os, double* Mr, int s_fla
 	f[0] = E - 20.0 * exp(sum1) - exp(sum2) + 20.0;
 }
 
-void weierstrass_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Weierstrass's  */
+inline void weierstrass_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Weierstrass's  */
 {
 	int i, j, k_max;
 	double sum, sum2, a, b;
@@ -253,7 +253,7 @@ void weierstrass_func(double* x, double* f, int nx, double* Os, double* Mr, int 
 }
 
 
-void rastrigin_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Rastrigin's  */
+inline void rastrigin_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Rastrigin's  */
 {
 	int i;
 	f[0] = 0.0;
@@ -266,7 +266,7 @@ void rastrigin_func(double* x, double* f, int nx, double* Os, double* Mr, int s_
 	}
 }
 
-void step_rastrigin_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Noncontinuous Rastrigin's  */
+inline void step_rastrigin_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Noncontinuous Rastrigin's  */
 {
 	int i;
 	f[0] = 0.0;
@@ -284,7 +284,7 @@ void step_rastrigin_func(double* x, double* f, int nx, double* Os, double* Mr, i
 	}
 }
 
-void schwefel_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Schwefel's  */
+inline void schwefel_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Schwefel's  */
 {
 	int i;
 	double tmp;
@@ -316,7 +316,7 @@ void schwefel_func(double* x, double* f, int nx, double* Os, double* Mr, int s_f
 
 
 
-void escaffer6_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Expanded Scaffer¡¯s F6  */
+inline void escaffer6_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Expanded Scaffer¡¯s F6  */
 {
 	int i;
 	double temp1, temp2;
@@ -337,7 +337,7 @@ void escaffer6_func(double* x, double* f, int nx, double* Os, double* Mr, int s_
 	f[0] += 0.5 + (temp1 - 0.5) / (temp2 * temp2);
 }
 
-void happycat_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* HappyCat, provdided by Hans-Georg Beyer (HGB) */
+inline void happycat_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* HappyCat, provdided by Hans-Georg Beyer (HGB) */
 {
 	int i;
 	double alpha, r2, sum_z;
@@ -357,7 +357,7 @@ void happycat_func(double* x, double* f, int nx, double* Os, double* Mr, int s_f
 }
 
 
-void shiftfunc(double* x, double* xshift, int nx, double* Os)
+inline void shiftfunc(double* x, double* xshift, int nx, double* Os)
 {
 	int i;
 	for (i = 0; i < nx; i++)
@@ -366,7 +366,7 @@ void shiftfunc(double* x, double* xshift, int nx, double* Os)
 	}
 }
 
-void rotatefunc(double* x, double* xrot, int nx, double* Mr)
+inline void rotatefunc(double* x, double* xrot, int nx, double* Mr)
 {
 	int i, j;
 	for (i = 0; i < nx; i++)
@@ -379,7 +379,7 @@ void rotatefunc(double* x, double* xrot, int nx, double* Mr)
 	}
 }
 
-void sr_func(double* x, double* sr_x, int nx, double* Os, double* Mr, double sh_rate, int s_flag, int r_flag) /* shift and rotate */
+inline void sr_func(double* x, double* sr_x, int nx, double* Os, double* Mr, double sh_rate, int s_flag, int r_flag) /* shift and rotate */
 {
 	int i;
 	if (s_flag == 1)
@@ -421,7 +421,7 @@ void sr_func(double* x, double* sr_x, int nx, double* Os, double* Mr, double sh_
 	}
 }
 
-void asyfunc(double* x, double* xasy, int nx, double beta)
+inline void asyfunc(double* x, double* xasy, int nx, double beta)
 {
 	int i;
 	for (i = 0; i < nx; i++)
@@ -431,7 +431,7 @@ void asyfunc(double* x, double* xasy, int nx, double beta)
 	}
 }
 
-void oszfunc(double* x, double* xosz, int nx)
+inline void oszfunc(double* x, double* xosz, int nx)
 {
 	int i, sx;
 	double c1, c2, xx;
@@ -466,7 +466,7 @@ void oszfunc(double* x, double* xosz, int nx)
 
 
 
-void Lennard_Jones(double* x, int D, double* f)  // find the atomic configuration with minimum energy
+inline void Lennard_Jones(double* x, int D, double* f)  // find the atomic configuration with minimum energy
 {
 	/* valid for any dimension, D=3*k, k=2,3,4,...,25.   k is the number of atoms in 3-D space
 	constraints: unconstrained
@@ -513,7 +513,7 @@ void Lennard_Jones(double* x, int D, double* f)  // find the atomic configuratio
 	f[0] += 12.7120622568;
 }
 
-void Hilbert(double* x, int D, double* f)  // find the inverse of the (ill-conditioned) Hilbert matrix
+inline void Hilbert(double* x, int D, double* f)  // find the inverse of the (ill-conditioned) Hilbert matrix
 {
 	/* valid for any dimension, n=k*k, k=2,3,4,...
 	constraints: unconstrained
@@ -567,7 +567,7 @@ void Hilbert(double* x, int D, double* f)  // find the inverse of the (ill-condi
 	f[0] += sum;
 }
 
-void Chebyshev(double* x, int D, double* f)  // Storn's Tchebychev - a 2nd ICEO function - generalized version
+inline void Chebyshev(double* x, int D, double* f)  // Storn's Tchebychev - a 2nd ICEO function - generalized version
 {
 	/* Valid for any D>2
 	constraints: unconstrained

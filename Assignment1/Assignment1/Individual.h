@@ -18,17 +18,21 @@ public:
 	/// <param name="x">point coordinates</param>
 	Individual(vector<double>& x);
 
+	Individual(const Individual& otherindividual);
+
 	/// <summary>
 	/// Constructor for randomly initialized point representing an individual
 	/// </summary>
 	/// <param name="dimensions">point dimensions</param>
 	/// <param name="min">function minima</param>
 	/// <param name="max">function maxima</param>
-	Individual(Function& function, Random& rng);
+	Individual(Function& function, Random& random);
 
 	double* get();
 
-	const double operator[](const int &index) const;
+	vector<double> getVector();
+
+	const double operator[](const unsigned&index) const;
 
 	/// <summary>
 	/// Computes element-wise difference between two individuals
