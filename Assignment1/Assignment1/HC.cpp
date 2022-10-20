@@ -1,6 +1,6 @@
 #include "HC.h"
 
-Individual HC::bestImprovement(Individual individual) {
+Individual HC::bestImprovement(Individual &individual) {
 	vector<double> improvedSolution = individual.getVector(), bestSolution = individual.getVector();
 	double mutationResult, bestResult = function(bestSolution.data());
 	for (unsigned i = 0; i < function.getDimensions(); ++i) {
@@ -23,6 +23,8 @@ Individual HC::bestImprovement(Individual individual) {
 	}
 	return bestSolution;
 }
+
+HC::HC(Individual& individual, Function& function, const double& epsilon, const unsigned& MAX_ITER) : individual(individual), function(function), epsilon(epsilon), MAX_ITER(MAX_ITER) {}
 
 double HC::improve() {
 	double bestResult = function(individual.get()), result;

@@ -1,14 +1,14 @@
 #pragma once
 #include "jDE100.h"
 
-void jDE100::initializePopulation(vector<Individual> population, unsigned size) {
+void jDE100::initializePopulation(vector<Individual>& population, const unsigned& size) {
 	population.clear();
 	for (unsigned i = 0; i < size; ++i) {
 		population.push_back(Individual(function, random));
 	}
 }
 
-const tuple<unsigned, unsigned, unsigned> jDE100::generateIndexes(const unsigned& index, unsigned popSize, unsigned offset) {
+const tuple<unsigned, unsigned, unsigned> jDE100::generateIndexes(const unsigned& index, const unsigned& popSize, const unsigned& offset) {
 	unsigned first, second, third;
 	do {
 		first = random.getRandomUnsigned(0, popSize - 1);
@@ -22,16 +22,12 @@ const tuple<unsigned, unsigned, unsigned> jDE100::generateIndexes(const unsigned
 	return make_tuple(first, second, third);
 }
 
-void jDE100::sample(const unsigned& index, unsigned& first, unsigned& second, unsigned& third, unsigned popSize, unsigned offset) {
+void jDE100::sample(const unsigned& index, unsigned& first, unsigned& second, unsigned& third, const unsigned& popSize, const unsigned& offset) {
 	tuple<unsigned, unsigned, unsigned> x = generateIndexes(index, popSize, offset);
 	tie(first, second, third) = x;
 }
 
-// jde mutation
-// randj = rand(0,1)
-// F = if rand2 <  s1 Fl + rand1 * Fu else Fi
-// mutation process is the same from sde with the possibility for r2 or r3 to be one individual from Ps(same for both)
-const Individual jDE100::mutation(const unsigned& first, const unsigned& second, const unsigned& third, double F, vector<Individual>& population) {
+const Individual jDE100::mutation(const unsigned& first, const unsigned& second, const unsigned& third, const double& F, const vector<Individual>& population) {
 	if (second == population.size())
 		return population[first] - (Ps[random.getRandomUnsigned(0, sNP)] - population[third]) * F;
 	if (third == population.size())
@@ -39,10 +35,7 @@ const Individual jDE100::mutation(const unsigned& first, const unsigned& second,
 	return population[first] - (population[second] - population[third]) * F;
 }
 
-// jde cross-over
-// CR = if rand4 < s2 rand3 else previos CRi
-// cr process is the same from sde
-vector<Individual> jDE100::crossOver(const Individual& v, double CR, vector<Individual>& population) {
+vector<Individual> jDE100::crossOver(const Individual& v, const double& CR, const vector<Individual>& population) {
 	unsigned D = function.getDimensions();
 	vector<Individual> u;
 	vector<double> result(D);
@@ -61,9 +54,7 @@ vector<Individual> jDE100::crossOver(const Individual& v, double CR, vector<Indi
 	return u;
 }
 
-// selection process is the same from sde
-// if element is better update vector values for CR and F with F and CR otherwise keep old values
-void jDE100::evaluate(vector<Individual>& u, vector<Individual>& population, double F, double CR, vector<double>& Fi, vector<double>& CRi) {
+void jDE100::evaluate(vector<Individual>& u, vector<Individual>& population, const double& F, const double& CR, vector<double>& Fi, vector<double>& CRi) {
 	for (unsigned i = 0; i < population.size(); ++i) {
 		if (function(u[i].get()) < function(population[i].get())) {
 			population[i] = u[i];

@@ -14,7 +14,11 @@ using namespace std;
 extern double* OShift, * M, * y, * z, * x_bound;
 extern int ini_flag, n_flag, func_flag, * SS;
 
-
+/// <summary>
+/// Function used to count the correct digits. The answer should always be 1.000000000
+/// </summary>
+/// <param name="value">value whose digits are counted</param>
+/// <returns>number of correct digits</returns>
 int countCorrectDigits(double value) {
 	int ivalue = (int)value, correctDigits = 0;
 	if (ivalue == 1) {
