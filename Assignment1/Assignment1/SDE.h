@@ -3,6 +3,7 @@
 #include <tuple>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include "Individual.h"
 #include "Function.h"
@@ -84,6 +85,8 @@ public:
 	/// <summary>
 	/// Runs SDE using specified parameters
 	/// </summary>
-	double run();
+	double run(ofstream& outputFile);
+
+	Function& getFunction() const;
 };
 

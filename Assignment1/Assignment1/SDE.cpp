@@ -62,12 +62,12 @@ void SDE::evaluate(vector<Individual>& u) {
 
 SDE::SDE(const unsigned&NP, const unsigned&MAXFES, const double &F, const double &CR, Function& function, bool useHC) : POP_SIZE(NP), MAXFES(MAXFES), MUTATION_FACTOR(F), CROSS_OVER(CR), function(function), useHC(useHC) {}
 
-double SDE::run() {
+double SDE::run(ofstream& outputFile) {
 	unsigned first, second, third;
 	initializePopulation();
 	for (unsigned CFES = 0; CFES < MAXFES; CFES += POP_SIZE) {
 		
-		if (CFES % 1000 == 0) {
+		if (CFES % 10000 == 0) {
 			cout << "Current iteration " << setw(10) << CFES << "/" << MAXFES << '\n';
 		}
 		for (unsigned i = 0; i < POP_SIZE; ++i) {
@@ -108,13 +108,26 @@ double SDE::run() {
 	cout << "Lowest value for f(x) = " << lowestValue << "\n";
 	cout << "Highest value for f(x) = " << highestValue << "\n";
 	cout << "Average value for f(x) = " << avgValue << "\n";
+
+	outputFile << "SDE Results for function " << function.getName() << " :\n";
+	outputFile << "Dimensions: " << function.getDimensions() << "\n";
+	outputFile << "Interval: [" << function.getMin() << ", " << function.getMax() << "]\n";
+	outputFile << "Lowest point coordinates (x) = " << population[bestIndex] << "\n";
+	outputFile << "Lowest value for f(x) = " << lowestValue << "\n";
+	outputFile << "Highest value for f(x) = " << highestValue << "\n";
+	outputFile << "Average value for f(x) = " << avgValue << "\n";
 	if (useHC) {
 		HC hillClimber = HC(population[bestIndex], function, 0.8, 10);
 		double improvedResult = hillClimber.improve();
 		cout << "Lowest point value after HC = " << improvedResult << "\n";
+		outputFile << "Lowest point value after HC = " << improvedResult << "\n";
 		if (improvedResult < lowestValue) {
 			return improvedResult;
 		}
 	}
 	return lowestValue;
+}
+
+Function& SDE::getFunction() const {
+	return function;
 }
