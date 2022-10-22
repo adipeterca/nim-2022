@@ -11,7 +11,7 @@ double Random::getRandomDouble(const double &min, const double &max) {
 	return distribution(generator);
 }
 
-int Random::getRandomInteger(const int &min, const int &max) {
+int Random::getRandomUnsigned(const unsigned&min, const unsigned&max) {
 	uniform_int_distribution<> distribution(min, max);
 	return distribution(generator);
 }

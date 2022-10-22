@@ -1,44 +1,45 @@
 #include "SDE.h"
+#include "HC.h"
 
 void SDE::initializePopulation() {
 	population.clear();
-	for (int i = 0; i < POP_SIZE; ++i) {
+	for (unsigned i = 0; i < POP_SIZE; ++i) {
 		// Not very clean but this guarantees that every run of SDE (for every function) has different values
-		population.push_back(Individual(function, rng));
+		population.push_back(Individual(function, random));
 	}
 }
 
-const tuple<int, int, int>  SDE::generateIndexes(const int& index) {
-	int first, second, third;
+const tuple<unsigned, unsigned, unsigned>  SDE::generateIndexes(const unsigned& index) {
+	unsigned first, second, third;
 	do {
-		first = rng.getRandomInteger(0, POP_SIZE - 1);
+		first = random.getRandomUnsigned(0, POP_SIZE - 1);
 	} while (first == index);
 	do {
-		second = rng.getRandomInteger(0, POP_SIZE - 1);
+		second = random.getRandomUnsigned(0, POP_SIZE - 1);
 	} while (second == index || second == first);
 	do {
-		third = rng.getRandomInteger(0, POP_SIZE - 1);
+		third = random.getRandomUnsigned(0, POP_SIZE - 1);
 	} while (third == index || third == first || third == second);
 	return make_tuple(first, second, third);
 }
 
-void SDE::sample(const int &index, int& first, int& second, int& third) {
-	tuple<double, double, double> x = generateIndexes(index);
+void SDE::sample(const unsigned&index, unsigned& first, unsigned& second, unsigned& third) {
+	tuple<unsigned, unsigned, unsigned> x = generateIndexes(index);
 	tie(first, second, third) = x;
 }
 
-const Individual SDE::mutation(const int& first, const int& second, const int& third) {
+const Individual SDE::mutation(const unsigned& first, const unsigned& second, const unsigned& third) {
 	return population[first] - (population[second] - population[third]) * MUTATION_FACTOR;
 }
 
 vector<Individual> SDE::crossOver(const Individual& v) {
-	int D = function.getDimensions();
+	unsigned D = function.getDimensions();
 	vector<Individual> u;
 	vector<double> result(D);
-	for (int i = 0; i < POP_SIZE; ++i) {
-		int jRand = rng.getRandomInteger(0, D);
-		for (int j = 0; j < D; ++j) {
-			if (j == jRand || rng.getRandomDouble(0.0, 1.0) <= CROSS_OVER) {
+	for (unsigned i = 0; i < POP_SIZE; ++i) {
+		unsigned jRand = random.getRandomUnsigned(0, D);
+		for (unsigned j = 0; j < D; ++j) {
+			if (j == jRand || random.getRandomDouble(0.0, 1.0) <= CROSS_OVER) {
 				result[j] = v[j];
 			}
 			else {
@@ -51,9 +52,7 @@ vector<Individual> SDE::crossOver(const Individual& v) {
 }
 
 void SDE::evaluate(vector<Individual>& u) {
-
-	for (int i = 0; i < POP_SIZE; ++i) {
-		
+	for (unsigned i = 0; i < POP_SIZE; ++i) {
 		if (function(u[i].get()) < function(population[i].get())) {
 			population[i] = u[i];
 			// cout << "Found better" << '\n';
@@ -61,17 +60,17 @@ void SDE::evaluate(vector<Individual>& u) {
 	}
 }
 
-SDE::SDE(const int &NP, const int &MAXFES, const double &F, const double &CR, Function& function) : POP_SIZE(NP), MAXFES(MAXFES), MUTATION_FACTOR(F), CROSS_OVER(CR), function(function) {}
+SDE::SDE(const unsigned&NP, const unsigned&MAXFES, const double &F, const double &CR, Function& function, bool useHC) : POP_SIZE(NP), MAXFES(MAXFES), MUTATION_FACTOR(F), CROSS_OVER(CR), function(function), useHC(useHC) {}
 
-void SDE::run() {
-	int first, second, third;
+double SDE::run(ofstream& outputFile) {
+	unsigned first, second, third;
 	initializePopulation();
-	for (int CFES = 0; CFES < MAXFES; CFES += POP_SIZE) {
+	for (unsigned CFES = 0; CFES < MAXFES; CFES += POP_SIZE) {
 		
-		if (CFES % 1000 == 0) {
+		if (CFES % 10000 == 0) {
 			cout << "Current iteration " << setw(10) << CFES << "/" << MAXFES << '\n';
 		}
-		for (int i = 0; i < POP_SIZE; ++i) {
+		for (unsigned i = 0; i < POP_SIZE; ++i) {
 
 			sample(i, first, second, third);
 
@@ -83,13 +82,13 @@ void SDE::run() {
 	}
 
 	// Compute best from this run
-	int bestIndex = 0;
+	unsigned bestIndex = 0;
 	double currentValue;
 	double lowestValue = function(population[bestIndex].get()); // Best individual is the one with the lowest function value
 	double highestValue = lowestValue; // Worst individual is the one with the highest function value
 	double avgValue = lowestValue;
 
-	for (int i = 1; i < POP_SIZE; ++i) {
+	for (unsigned i = 1; i < POP_SIZE; ++i) {
 		currentValue = function(population[i].get());
 		avgValue += currentValue;
 		if (lowestValue > currentValue) {
@@ -109,4 +108,26 @@ void SDE::run() {
 	cout << "Lowest value for f(x) = " << lowestValue << "\n";
 	cout << "Highest value for f(x) = " << highestValue << "\n";
 	cout << "Average value for f(x) = " << avgValue << "\n";
+
+	outputFile << "SDE Results for function " << function.getName() << " :\n";
+	outputFile << "Dimensions: " << function.getDimensions() << "\n";
+	outputFile << "Interval: [" << function.getMin() << ", " << function.getMax() << "]\n";
+	outputFile << "Lowest point coordinates (x) = " << population[bestIndex] << "\n";
+	outputFile << "Lowest value for f(x) = " << lowestValue << "\n";
+	outputFile << "Highest value for f(x) = " << highestValue << "\n";
+	outputFile << "Average value for f(x) = " << avgValue << "\n";
+	if (useHC) {
+		HC hillClimber = HC(population[bestIndex], function, 0.8, 10);
+		double improvedResult = hillClimber.improve();
+		cout << "Lowest point value after HC = " << improvedResult << "\n";
+		outputFile << "Lowest point value after HC = " << improvedResult << "\n";
+		if (improvedResult < lowestValue) {
+			return improvedResult;
+		}
+	}
+	return lowestValue;
+}
+
+Function& SDE::getFunction() const {
+	return function;
 }

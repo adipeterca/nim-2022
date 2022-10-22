@@ -4,9 +4,13 @@ Individual::Individual(vector<double>& x) {
 	this->x = x;
 }
 
-Individual::Individual(Function &function, Random &rng) {
-	for (int i = 0; i < function.getDimensions(); ++i) {
-		x.push_back(rng.getRandomDouble(function.getMin(), function.getMax()));
+Individual::Individual(const Individual& otherindividual) {
+	this->x = otherindividual.x;
+}
+
+Individual::Individual(Function &function, Random &random) {
+	for (unsigned i = 0; i < function.getDimensions(); ++i) {
+		x.push_back(random.getRandomDouble(function.getMin(), function.getMax()));
 	}
 }
 
@@ -14,7 +18,12 @@ double* Individual::get() {
 	return x.data(); // doesnt work for bool
 }
 
-const double Individual::operator[](const int &index) const {
+
+vector<double> Individual::getVector() {
+	return x;
+}
+
+const double Individual::operator[](const unsigned&index) const {
 	return x[index];
 }
 
@@ -25,7 +34,7 @@ const Individual Individual::operator-(const Individual &other) const {
 	}
 
 	vector<double> diff;
-	for (int i = 0; i < x.size(); ++i) {
+	for (unsigned i = 0; i < x.size(); ++i) {
 		diff.push_back(x[i] - other.x[i]);
 	}
 	return Individual(diff);
@@ -38,7 +47,7 @@ const Individual Individual::operator+(const Individual &other) const {
 	}
 
 	vector<double> sum;
-	for (int i = 0; i < x.size(); ++i) {
+	for (unsigned i = 0; i < x.size(); ++i) {
 		sum.push_back(x[i] + other.x[i]);
 	}
 	return Individual(sum);
@@ -54,7 +63,7 @@ const Individual Individual::operator*(const double &factor) const {
 
 ostream& operator<<(ostream& os, Individual const& individual) {
 	os << "[";
-	for (int i = 0; i < individual.x.size(); ++i) {
+	for (unsigned i = 0; i < individual.x.size(); ++i) {
 		if (i + 1 != individual.x.size())
 			os << individual.x[i] << ", ";
 		else

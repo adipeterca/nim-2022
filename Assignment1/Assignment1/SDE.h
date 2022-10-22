@@ -3,6 +3,7 @@
 #include <tuple>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include "Individual.h"
 #include "Function.h"
@@ -17,12 +18,11 @@ using namespace std;
 class SDE
 {
 private:
-	const int POP_SIZE;
-	const int MAXFES;
-	const double MUTATION_FACTOR;
-	const double CROSS_OVER;
+	const unsigned POP_SIZE, MAXFES;
+	const double MUTATION_FACTOR, CROSS_OVER;
+	bool useHC;
 
-	Random rng;
+	Random random;
 
 	vector<Individual> population;
 	Function& function;
@@ -38,7 +38,7 @@ private:
 	/// </summary>
 	/// <param name="index">index</param>
 	/// <returns>tuple containing positions</returns>
-	const tuple<int, int, int> generateIndexes(const int& index);
+	const tuple<unsigned, unsigned, unsigned> generateIndexes(const unsigned& index);
 
 	/// <summary>
 	/// Passes as reference three random distinct positions from population vector with first != second != third != index
@@ -47,7 +47,7 @@ private:
 	/// <param name="first">first position</param>
 	/// <param name="second">second position</param>
 	/// <param name="third">third position</param>
-	void sample(const int& index, int& first, int& second, int& third);
+	void sample(const unsigned& index, unsigned& first, unsigned& second, unsigned& third);
 
 	/// <summary>
 	/// Generates individual using a mutation scheme
@@ -56,7 +56,7 @@ private:
 	/// <param name="second">second individual</param>
 	/// <param name="third">third individual</param>
 	/// <returns>new individual</returns>
-	const Individual mutation(const int& first, const int& second, const int& third);
+	const Individual mutation(const unsigned& first, const unsigned& second, const unsigned& third);
 
 	/// <summary>
 	/// Generates a vector of individuals using a cross-over scheme
@@ -80,11 +80,13 @@ public:
 	/// <param name="F">mutation factor</param>
 	/// <param name="CR">crossover probability</param>
 	/// <param name="function">function to explore</param>
-	SDE(const int& NP, const int& MAXFES, const double& F, const double& CR, Function& function);
+	SDE(const unsigned& NP, const unsigned& MAXFES, const double& F, const double& CR, Function& function, bool useHC);
 
 	/// <summary>
 	/// Runs SDE using specified parameters
 	/// </summary>
-	void run();
+	double run(ofstream& outputFile);
+
+	Function& getFunction() const;
 };
 
