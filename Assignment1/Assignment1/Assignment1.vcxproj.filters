@@ -30,13 +30,13 @@
     <ClCompile Include="Function.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Random.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="jDE100.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,13 +53,13 @@
     <ClInclude Include="Function.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Random.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="jDE100.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

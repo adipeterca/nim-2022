@@ -10,7 +10,13 @@ const double Function::operator ()(const double* x) {
 	return *returnValue;
 }
 
-const int Function::getDimensions() {
+//const double Function::operator ()(const Individual& x) {
+//	double* returnValue = new double;
+//	cec19_test_func((double*)x.get(), returnValue, dimensions, 1, id);
+//	return *returnValue;
+//}
+
+const size_t Function::getDimensions() {
 	return dimensions;
 }
 
@@ -22,6 +28,6 @@ const double Function::getMax() {
 	return max;
 }
 
-string& Function::getName() {
+const string& Function::getName() {
 	return name;
 }

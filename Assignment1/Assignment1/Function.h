@@ -1,5 +1,8 @@
-#pragma once
+#ifndef FUNCTION_H
+#define FUNCTION_H
+
 #include "cec19_func.h"
+#include "Individual.h"
 #include <string>
 
 using namespace std;
@@ -10,7 +13,8 @@ using namespace std;
 class Function
 {
 private:
-	const int id, dimensions;
+	const unsigned int id;
+	const size_t dimensions;
 	const double min, max;
 	string name;
 public:
@@ -30,12 +34,16 @@ public:
 	/// <returns>f(x) (function value)</returns>
 	const double operator ()(const double* x);
 
-	const int getDimensions();
+	// Does not work because of #include recurssion
+	// const double operator ()(const Individual& x);
+
+	const size_t getDimensions();
 
 	const double getMin();
 
 	const double getMax();
 
-	string& getName();
+	const string& getName();
 };
 
+#endif

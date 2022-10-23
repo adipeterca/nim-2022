@@ -4,20 +4,20 @@
 void jDE100::initializePopulation(vector<Individual>& population, const unsigned& size) {
 	population.clear();
 	for (unsigned i = 0; i < size; ++i) {
-		population.push_back(Individual(function, random));
+		population.push_back(Individual(function));
 	}
 }
 
 const tuple<unsigned, unsigned, unsigned> jDE100::generateIndexes(const unsigned& index, const unsigned& popSize, const unsigned& offset) {
 	unsigned first, second, third;
 	do {
-		first = random.getRandomUnsigned(0, popSize - 1);
+		first = getRandomUnsigned(0, popSize - 1);
 	} while (first == index);
 	do {
-		second = random.getRandomUnsigned(0, popSize - 1 + offset);
+		second = getRandomUnsigned(0, popSize - 1 + offset); // aici crapa pentru ca iese din interval (de aici porneste eroarea)
 	} while (second == index || second == first);
 	do {
-		third = random.getRandomUnsigned(0, popSize - 1 + offset);
+		third = getRandomUnsigned(0, popSize - 1 + offset);
 	} while (third == index || third == first || third == second);
 	return make_tuple(first, second, third);
 }
@@ -28,21 +28,28 @@ void jDE100::sample(const unsigned& index, unsigned& first, unsigned& second, un
 }
 
 const Individual jDE100::mutation(const unsigned& first, const unsigned& second, const unsigned& third, const double& F, const vector<Individual>& population) {
+	// LE 23.10 ora 13:15
+	// Am inteles ce vrei sa faci aici, dar ar trebui sa fie at the very least >=, nu ==. Daca seconds iti ia de exemplu valoarea 102, el nu intra aici.
+	// Also, getRandomUnsigned ar trebui sa fie intre [0, sNP-1]
 	if (second == population.size())
-		return population[first] - (Ps[random.getRandomUnsigned(0, sNP)] - population[third]) * F;
+		return population[first] - (Ps[getRandomUnsigned(0, sNP)] - population[third]) * F;
 	if (third == population.size())
-		return population[first] - (population[second] - Ps[random.getRandomUnsigned(0, sNP)]) * F;
+		return population[first] - (population[second] - Ps[getRandomUnsigned(0, sNP)]) * F;
 	return population[first] - (population[second] - population[third]) * F;
 }
 
-vector<Individual> jDE100::crossOver(const Individual& v, const double& CR, const vector<Individual>& population) {
-	unsigned D = function.getDimensions();
+vector<Individual> jDE100::crossOver(Individual& const v, const double& CR, vector<Individual>& const population) {
+	// 1000 individizi
+	// vector V
+	// CR iteratiei curente (i)
+	/*unsigned D = function.getDimensions();
 	vector<Individual> u;
 	vector<double> result(D);
 	for (unsigned i = 0; i < population.size(); ++i) {
-		unsigned jRand = random.getRandomUnsigned(0, D);
+		unsigned jRand = getRandomUnsigned(0, D);
 		for (unsigned j = 0; j < D; ++j) {
-			if (j == jRand || random.getRandomDouble(0.0, 1.0) <= CR) {
+			if (j == jRand || getRandomDouble(0.0, 1.0) <= CR) {
+				
 				result[j] = v[j];
 			}
 			else {
@@ -51,7 +58,8 @@ vector<Individual> jDE100::crossOver(const Individual& v, const double& CR, cons
 		}
 		u.push_back(Individual(result));
 	}
-	return u;
+	return u;*/
+	return population;
 }
 
 void jDE100::evaluate(vector<Individual>& u, vector<Individual>& population, const double& F, const double& CR, vector<double>& Fi, vector<double>& CRi) {
@@ -69,17 +77,19 @@ void jDE100::jDEOperations(vector<Individual>& population, vector<double>& Fi, v
 	double F, CR;
 	for (unsigned j = 0; j < population.size(); ++j) {
 		// jde mutation
-		if (random.getRandomDouble(0, 1) < s1) {
-			F = Fl + random.getRandomDouble(0, 1) * Fu;
+		if (getRandomDouble(0, 1) < s1) {
+			F = Fl + getRandomDouble(0, 1) * Fu;
 		}
 		else {
 			F = Fi[j];
 		}
+		offset = 0;
 		sample(j, first, second, third, population.size(), offset);
+		// cout << "Sampled " << first << " " << second << " " << third << "\n";
 		Individual v = mutation(first, second, third, F, population);
 		// jde crossover
-		if (random.getRandomDouble(0, 1) < s2) {
-			CR = random.getRandomDouble(0, 1);
+		if (getRandomDouble(0, 1) < s2) {
+			CR = getRandomDouble(0, 1);
 		}
 		else {
 			CR = CRi[j];
@@ -139,7 +149,22 @@ double jDE100::maxSimilarityPercentage(vector<Individual>& population) {
 }
 
 
-jDE100::jDE100(Function& function, const unsigned bNP = 1000, const unsigned sNP = 25, const unsigned ageLimit = 1e9, const unsigned maxFE = 1e3, const unsigned myEqs = 25, const double Fl = 0.1, const double Fu = 0.9, const double Finit = 0.5, const double CRl = 0.0, const double CRu = 1.1, const double CRinit = 0.9, const double s1 = 0.1, const double s2 = 0.1, const double epsilon = 1e-14) : function(function) {
+jDE100::jDE100(Function& function, 
+				const unsigned bNP, 
+				const unsigned sNP, 
+				const unsigned ageLimit, 
+				const unsigned maxFE, 
+				const unsigned myEqs, 
+				const double Fl, 
+				const double Fu, 
+				const double Finit, 
+				const double CRl, 
+				const double CRu, 
+				const double CRinit, 
+				const double s1, 
+				const double s2, 
+				const double epsilon) : function(function) {
+
 	this->bNP = bNP;
 	this->sNP = sNP;
 	this->ageLimit = ageLimit;
@@ -154,7 +179,8 @@ jDE100::jDE100(Function& function, const unsigned bNP = 1000, const unsigned sNP
 	this->s1 = s1;
 	this->s2 = s2;
 	this->epsilon = epsilon;
-	// initialize Fi = 0.5, CRi = 0.9 i in{1...bNP + sNP}
+
+	// initialize Fi = 0.5, CRi = 0.9 for every i in {1...bNP + sNP}
 	this->Fs = new vector<double>(sNP, Finit);
 	this->Fb = new vector<double>(bNP, Finit);
 	this->CRs = new vector<double>(sNP, CRinit);
@@ -164,21 +190,34 @@ jDE100::jDE100(Function& function, const unsigned bNP = 1000, const unsigned sNP
 Individual jDE100::run() {
 	// initialize Pb (big pop) bNP = m * sNP
 	// initialize Ps (small pop)
+	ofstream fout("jde_output.txt");
+
+	auto t0 = chrono::high_resolution_clock::now();
+
 	initializePopulation(Pb, bNP);
 	initializePopulation(Ps, sNP);
 	Individual bBest = getBestIndividual(Pb), sBest = getBestIndividual(Ps);
 	Individual best = function(bBest.get()) < function(sBest.get()) ? bBest : sBest;
 
 	unsigned m = bNP / sNP, age = 0, cFE = 0;
+	unsigned currentIter = 0;
 	// while solution not found or max iter not reached
 	while (function(best.get()) > 1.000000000) { // cFE < maxFE, should getBestIndividual fe be considered?
 		// check for Pb reinitialization -> do if myEqs% individuals have similar function value(diff is less than epsilon)
 		//									or if best individual is not improved for ageLmt evaluations
 		// random reinitialization
+		
+		
+		cout << "Current main iteration: " << currentIter << endl;
+		fout << "Current main iteration: " << currentIter << endl;
+		currentIter++;
+		fout.flush();
+
 		if (age == ageLimit || maxSimilarityPercentage(Pb) >= myEqs) {
 			initializePopulation(Pb, bNP);
 			age = 0;
 		}
+
 		// check for Ps reinitialization -> do if myEqs% individuals have similar function value as the best from Ps
 		// keep best, random reinitialization for others
 		if (maxSimilarityPercentage(Pb) >= myEqs) {
@@ -208,5 +247,12 @@ Individual jDE100::run() {
 			age = 0;
 		}
 	}
+
+	auto t1 = chrono::high_resolution_clock::now();
+	auto seconds = chrono::duration_cast<chrono::milliseconds>(t1 - t0).count() / 1000;
+
+	cout << "Found best value of " << function(best.get()) << " for function " << function.getName() << " in " << seconds / 60 << ":" << seconds % 60 << "\n";
+	fout << "Found best value of " << function(best.get()) << " for function " << function.getName() << " in " << seconds / 60 << ":" << seconds % 60 << "\n";
+	fout.flush();
 	return best;
 }

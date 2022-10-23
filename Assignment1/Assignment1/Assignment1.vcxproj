@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <StructMemberAlignment>8Bytes</StructMemberAlignment>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,8 +134,8 @@
     <ClCompile Include="HC.cpp" />
     <ClCompile Include="Individual.cpp" />
     <ClCompile Include="jDE100.cpp" />
-    <ClCompile Include="Random.cpp" />
     <ClCompile Include="SDE.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cec19_func.h" />
@@ -142,8 +143,8 @@
     <ClInclude Include="HC.h" />
     <ClInclude Include="Individual.h" />
     <ClInclude Include="jDE100.h" />
-    <ClInclude Include="Random.h" />
     <ClInclude Include="SDE.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

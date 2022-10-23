@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CEC19_H
+#define CEC19_H
 
 inline void Lennard_Jones(double*, int, double*); /* Lennard Jones */
 inline void Hilbert(double*, int, double*); /* Hilbert */
@@ -19,3 +20,4 @@ inline void asyfunc(double*, double* x, int, double);
 inline void oszfunc(double*, double*, int);
 
 void cec19_test_func(double*, double*, int, int, int);
+#endif
