@@ -287,9 +287,11 @@ public:
 		while (currentFE < maxFE) {
 			currentGen++;
 			if (currentGen % 1000 == 0) {
-				cout << "Currently at generation " << currentGen << "\n";
+				// cout << "Currently at generation " << currentGen << "\n";
 				cout << "Best so far: " << function(findBestOverall(true)->get()) << "\n";
-				if (function(smallBest->get()) == 1.000000000 || function(bigBest->get()) == 1.000000000) {
+				fout << "Best so far: " << function(findBestOverall(true)->get()) << "\n";
+				fout.flush();
+				if (function(smallBest->get()) - 1.000000000 <= EPSILON || function(bigBest->get()) - 1.000000000 <= EPSILON) {
 					break;
 				}
 			}
@@ -301,17 +303,20 @@ public:
 
 			if (age >= ageLimitation) {
 				cout << "Age limitation hit\n";
+				fout << "Age limitation hit\n";
 				initPopulation(bigPopulation, bigPopulationSize);
 				age = 0;
 			}
 			if (bestPercentage(bigPopulation, bigBest) >= similarityPercentage) {
 				cout << "Similarity percentage hit\n";
+				fout << "Similarity percentage hit\n";
 				initPopulation(bigPopulation, bigPopulationSize);
 			}
 
 			// Check for a reinitialization of smallPopulation
 			if (bestPercentage(smallPopulation, smallBest) >= similarityPercentage) {
 				cout << "Similarity percentage for small hit\n";
+				fout << "Similarity percentage for small hit\n";
 				Individual prevBest = *smallBest;
 				initPopulation(smallPopulation, smallPopulationSize);
 				smallPopulation[0] = prevBest;
@@ -434,7 +439,7 @@ public:
 	void run() {
 		algorithm();
 		Individual best = *findBestOverall(true);
-		cout << best;
+		cout << function(best.get()) << "\n";
 	}
 };
 
@@ -462,8 +467,16 @@ int main()
 	ParameterConstrains mutation(0.1, 0.9, 0.5, 0.1);
 	ParameterConstrains crossover(0.1, 1.1, 0.5, 0.1);
 
-	jDE2 alg(functions[3], mutation, crossover);
-	alg.run();
+	auto t0 = chrono::high_resolution_clock::now();
+	for (int i = 0; i < 10; i++) {
+		if (i == 1) continue;
+		cout << "Currently evaluating function " << functions[i].getName() << "\n";
+		jDE2 alg(functions[i], mutation, crossover);
+		alg.run();
+		auto t1 = chrono::high_resolution_clock::now();
+		int seconds = chrono::duration_cast<chrono::milliseconds>(t1 - t0).count() / 1000;
+		cout << "Finished current function in " << seconds / 60 << ":" << seconds % 60 << "\n";
+	}
 
 
 	// Idei de improvement:
