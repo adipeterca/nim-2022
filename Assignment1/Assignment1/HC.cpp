@@ -41,6 +41,7 @@ double HC::improve() {
 			else {
 				foundBetter = true;
 			}
+			cout << "aici2\n";
 		} while (!foundBetter);
 		epsilon *= 10;
 	}

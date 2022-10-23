@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HC_H
+#define HC_H
 #include <vector>
 #include "Individual.h"
 #include "Function.h"
@@ -35,3 +36,4 @@ public:
 	/// <returns>f(individual) if no improvement is found f(best) otherwise</returns>
 	double improve();
 };
+#endif

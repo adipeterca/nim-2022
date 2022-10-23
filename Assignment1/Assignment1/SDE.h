@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SDE_H
+#define SDE_H
+
 #include <vector>
 #include <tuple>
 #include <algorithm>
@@ -7,7 +9,7 @@
 #include <iomanip>
 #include "Individual.h"
 #include "Function.h"
-#include "Random.h"
+#include "Utils.h"
 
 
 using namespace std;
@@ -21,8 +23,6 @@ private:
 	const unsigned POP_SIZE, MAXFES;
 	const double MUTATION_FACTOR, CROSS_OVER;
 	bool useHC;
-
-	Random random;
 
 	vector<Individual> population;
 	Function& function;
@@ -63,7 +63,7 @@ private:
 	/// </summary>
 	/// <param name="v">donor vector</param>
 	/// <returns>vector of individuals</returns>
-	vector<Individual> crossOver(const Individual& v);
+	vector<Individual> crossOver(Individual& const v);
 
 	/// <summary>
 	/// Compares vector of individuals to existing population element-wise
@@ -90,3 +90,4 @@ public:
 	Function& getFunction() const;
 };
 
+#endif

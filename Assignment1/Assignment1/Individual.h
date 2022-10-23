@@ -1,38 +1,56 @@
-#pragma once
+#ifndef INDIVIDUAL_H
+#define INDIVIDUAL_H
+
 #include <vector>
 #include <iostream>
-#include "Random.h"
+#include "Utils.h"
 #include "Function.h"
 
 using namespace std;
+
+// #include reference
+class Function;
 
 class Individual
 {
 private:
 	vector<double> x;
+	
+	double value;
 
+	// An Individual object CAN exist without a function, so
+	// we cannot use references.
+	Function* function = nullptr;
 public:
 	/// <summary>
 	/// Constructor for non-random initialization
 	/// </summary>
 	/// <param name="x">point coordinates</param>
-	Individual(vector<double>& x);
+	Individual(vector<double>& const x);
 
-	Individual(const Individual& otherindividual);
+	Individual(const Individual& otherIndividual);
 
 	/// <summary>
-	/// Constructor for randomly initialized point representing an individual
+	/// Ties a function to this point (and also randomize it along the search space).
 	/// </summary>
-	/// <param name="dimensions">point dimensions</param>
-	/// <param name="min">function minima</param>
-	/// <param name="max">function maxima</param>
-	Individual(Function& function, Random& random);
+	/// <param name="function">the function to which this object is tied</param>
+	Individual(Function& function);
 
-	double* get();
+	Individual() {};
+
+	/// <summary>
+	/// Resize the point for a given function, while also binding that function to this point.
+	/// </summary>
+	/// <param name="function">the specified function</param>
+	void resize(Function& function);
+
+	const double* get() const;
 
 	vector<double> getVector();
 
-	const double operator[](const unsigned&index) const;
+	double& operator[](const unsigned&index);
+
+	bool operator==(const Individual& ind) const;
 
 	/// <summary>
 	/// Computes element-wise difference between two individuals
@@ -63,4 +81,4 @@ public:
 	/// <returns>a stream representation of the given object</returns>
 	friend ostream& operator<<(ostream& os, const Individual &individual);
 };
-
+#endif

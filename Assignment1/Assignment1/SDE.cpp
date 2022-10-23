@@ -5,20 +5,20 @@ void SDE::initializePopulation() {
 	population.clear();
 	for (unsigned i = 0; i < POP_SIZE; ++i) {
 		// Not very clean but this guarantees that every run of SDE (for every function) has different values
-		population.push_back(Individual(function, random));
+		population.push_back(Individual(function));
 	}
 }
 
 const tuple<unsigned, unsigned, unsigned>  SDE::generateIndexes(const unsigned& index) {
 	unsigned first, second, third;
 	do {
-		first = random.getRandomUnsigned(0, POP_SIZE - 1);
+		first = getRandomUnsigned(0, POP_SIZE - 1);
 	} while (first == index);
 	do {
-		second = random.getRandomUnsigned(0, POP_SIZE - 1);
+		second = getRandomUnsigned(0, POP_SIZE - 1);
 	} while (second == index || second == first);
 	do {
-		third = random.getRandomUnsigned(0, POP_SIZE - 1);
+		third = getRandomUnsigned(0, POP_SIZE - 1);
 	} while (third == index || third == first || third == second);
 	return make_tuple(first, second, third);
 }
@@ -32,14 +32,14 @@ const Individual SDE::mutation(const unsigned& first, const unsigned& second, co
 	return population[first] - (population[second] - population[third]) * MUTATION_FACTOR;
 }
 
-vector<Individual> SDE::crossOver(const Individual& v) {
+vector<Individual> SDE::crossOver(Individual& const v) {
 	unsigned D = function.getDimensions();
 	vector<Individual> u;
 	vector<double> result(D);
 	for (unsigned i = 0; i < POP_SIZE; ++i) {
-		unsigned jRand = random.getRandomUnsigned(0, D);
+		unsigned jRand = getRandomUnsigned(0, D);
 		for (unsigned j = 0; j < D; ++j) {
-			if (j == jRand || random.getRandomDouble(0.0, 1.0) <= CROSS_OVER) {
+			if (j == jRand || getRandomDouble(0.0, 1.0) <= CROSS_OVER) {
 				result[j] = v[j];
 			}
 			else {
@@ -71,7 +71,7 @@ double SDE::run(ofstream& outputFile) {
 			cout << "Current iteration " << setw(10) << CFES << "/" << MAXFES << '\n';
 		}
 		for (unsigned i = 0; i < POP_SIZE; ++i) {
-
+			cout << "aici\n";
 			sample(i, first, second, third);
 
 			Individual v = mutation(first, second, third);

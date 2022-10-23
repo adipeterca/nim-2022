@@ -1,19 +1,18 @@
-#pragma once
+#ifndef JDE100_H
+#define JDE100_H
 #include <vector>
 #include <tuple>
 #include <sstream>
 #include <iomanip>
 #include <unordered_map>
+#include <fstream>
 #include "Individual.h"
 #include "Function.h"
-#include "Random.h"
 
 class jDE100 {
 private:
 	unsigned bNP, sNP, ageLimit, maxFE, myEqs;
 	double Fl, Fu, Finit, CRl, CRu, CRinit, s1, s2, epsilon;
-
-	Random random;
 
 	vector<Individual> Pb, Ps;
 	vector<double>* Fs, * Fb, * CRs, * CRb;
@@ -70,7 +69,7 @@ private:
 	/// <param name="CR">parameter that controls how often cross over happens</param>
 	/// <param name="population">population of individuals to apply cross-over on</param>
 	/// <returns>vector of individuals</returns>
-	vector<Individual> crossOver(const Individual& v, const double& CR, const vector<Individual>& population);
+	vector<Individual> crossOver(Individual& const v, const double& CR, vector<Individual>& const population);
 
 	/// <summary>
 	/// jDE selection
@@ -135,10 +134,25 @@ public:
 	/// <param name="s1">paramter controlling F value updates</param>
 	/// <param name="s2">paramter controlling CR value updates</param>
 	/// <param name="epsilon">treshold for precision</param>
-	jDE100(Function& function, const unsigned bNP, const unsigned sNP, const unsigned ageLimit, const unsigned maxFE, const unsigned myEqs, const double Fl, const double Fu, const double Finit, const double CRl, const double CRu, const double CRinit, const double s1, const double s2, const double epsilon);
+	jDE100(Function& function, 
+			const unsigned bNP = 1000,
+			const unsigned sNP = 25,
+			const unsigned ageLimit = 1e9,
+			const unsigned maxFE = 1e3,
+			const unsigned myEqs = 25,
+			const double Fl = 0.1,
+			const double Fu = 0.9,
+			const double Finit = 0.5,
+			const double CRl = 0.0,
+			const double CRu = 1.1,
+			const double CRinit = 0.9,
+			const double s1 = 0.1,
+			const double s2 = 0.1,
+			const double epsilon = 1e-14);
 
 	/// <summary>
 	/// Runs jDE100 using specified parameters
 	/// </summary>
 	Individual run();
 };
+#endif

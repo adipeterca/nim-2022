@@ -1,30 +1,44 @@
 #include "Individual.h"
 
-Individual::Individual(vector<double>& x) {
+Individual::Individual(vector<double>& const x) {
 	this->x = x;
 }
 
-Individual::Individual(const Individual& otherindividual) {
-	this->x = otherindividual.x;
+Individual::Individual(const Individual& otherIndividual) {
+	this->x = otherIndividual.x;
+	this->value = otherIndividual.value;
+	this->function = otherIndividual.function;
 }
 
-Individual::Individual(Function &function, Random &random) {
+Individual::Individual(Function &function) {
 	for (unsigned i = 0; i < function.getDimensions(); ++i) {
-		x.push_back(random.getRandomDouble(function.getMin(), function.getMax()));
+		x.push_back(getRandomDouble(function.getMin(), function.getMax()));
 	}
+	value = function(x.data());
+	this->function = &function;
 }
 
-double* Individual::get() {
-	return x.data(); // doesnt work for bool
+void Individual::resize(Function& function) {
+	x.resize(function.getDimensions());
+	this->function = &function;
 }
 
+const double* Individual::get() const {
+	return x.data();
+}
 
 vector<double> Individual::getVector() {
 	return x;
 }
 
-const double Individual::operator[](const unsigned&index) const {
+double& Individual::operator[](const unsigned&index) {
 	return x[index];
+}
+
+bool Individual::operator==(const Individual& ind) const {
+	// NOTE: needs to be tested
+	// LE: tested, works!
+	return ind.x == x;
 }
 
 const Individual Individual::operator-(const Individual &other) const {
