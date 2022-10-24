@@ -134,6 +134,7 @@
     <ClCompile Include="HC.cpp" />
     <ClCompile Include="Individual.cpp" />
     <ClCompile Include="jDE100.cpp" />
+    <ClCompile Include="jDE100v2.cpp" />
     <ClCompile Include="SDE.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
@@ -143,6 +144,7 @@
     <ClInclude Include="HC.h" />
     <ClInclude Include="Individual.h" />
     <ClInclude Include="jDE100.h" />
+    <ClInclude Include="jDE100v2.h" />
     <ClInclude Include="SDE.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>

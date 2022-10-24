@@ -3,6 +3,8 @@
 
 #include <chrono>
 #include <random>
+#include <sstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -25,5 +27,11 @@ double getRandomDouble(const double min, const double max);
 /// <returns>random size_t number</returns>
 size_t getRandomUnsigned(const size_t min, const size_t max);
 
+/// <summary>
+/// Function used to count the correct digits. The answer is always 1.000000000.
+/// </summary>
+/// <param name="value">value whose digits are counted</param>
+/// <returns>number of correct digits</returns>
+int countCorrectDigits(double value);
 
 #endif

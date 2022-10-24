@@ -78,7 +78,7 @@ const Individual Individual::operator*(const double &factor) const {
 
 ostream& operator<<(ostream& os, Individual const& individual) {
 	os << "[";
-	for (unsigned i = 0; i < individual.x.size(); ++i) {
+	for (size_t i = 0; i < individual.x.size(); ++i) {
 		if (i + 1 != individual.x.size())
 			os << individual.x[i] << ", ";
 		else
