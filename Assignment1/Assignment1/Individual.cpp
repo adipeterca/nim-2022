@@ -11,6 +11,7 @@ Individual::Individual(const Individual& otherIndividual) {
 }
 
 Individual::Individual(Function &function) {
+	x.clear();
 	for (unsigned i = 0; i < function.getDimensions(); ++i) {
 		x.push_back(getRandomDouble(function.getMin(), function.getMax()));
 	}

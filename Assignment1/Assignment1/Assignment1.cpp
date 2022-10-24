@@ -157,37 +157,37 @@ public:
 			}
 
 			// Apply mutation
-			size_t r1, r2, r3;
-			do {
-				r1 = getRandomUnsigned(0, population.size() - 1);
-				r2 = getRandomUnsigned(0, population.size() - 1);
-				r3 = getRandomUnsigned(0, population.size() - 1);
-			} while (r1 == r2 || r1 == r3 || r1 == i || r2 == r3 || r2 == i || r3 == i);
+			Individual v;
+			if (performOnBigPopulation) {
+				size_t r1, r2, r3;
+				do {
+					r1 = getRandomUnsigned(0, bigPopulationSize - 1);
+					r2 = getRandomUnsigned(0, bigPopulationSize);
+					r3 = getRandomUnsigned(0, bigPopulationSize);
+				} while (r1 == r2 || r1 == r3 || r1 == i || r2 == r3 || r2 == i || r3 == i);
+			
+				if (r2 == bigPopulationSize || r3 == bigPopulationSize) {
+					// This time the elements will be different nontheless, so there is no need to do-while
+					r2 = getRandomUnsigned(0, smallPopulationSize - 1);
+					r3 = getRandomUnsigned(0, smallPopulationSize - 1);
+					v = bigPopulation[r1] + (smallPopulation[r2] - smallPopulation[r3]) * newMutationFactor;
+				}
+				else {
+					v = bigPopulation[r1] + (bigPopulation[r2] - bigPopulation[r3]) * newMutationFactor;
+				}
 
-			Individual v = population[r1] + (population[r2] - population[r3]) * newMutationFactor;
+			}
+			else {
+				size_t r1, r2, r3;
+				do {
+					r1 = getRandomUnsigned(0, population.size() - 1);
+					r2 = getRandomUnsigned(0, population.size() - 1);
+					r3 = getRandomUnsigned(0, population.size() - 1);
+				} while (r1 == r2 || r1 == r3 || r1 == i || r2 == r3 || r2 == i || r3 == i);
 
-			/*
-			* The original idea is presented below
-			*
-			* size_t r1, r2, r3;
-			* do {
-			* 	r1 = getRandomUnsigned(0, bigPopulationSize - 1);
-			* 	r2 = getRandomUnsigned(0, bigPopulationSize);
-			* 	r3 = getRandomUnsigned(0, bigPopulationSize);
-			* } while (r1 == r2 || r1 == r3 || r1 == i || r2 == r3 || r2 == i || r3 == i);
-			*
-			* Individual v;
-			*
-			* if (r2 == bigPopulationSize || r3 == bigPopulationSize) {
-			* 	// This time the elements will be different nontheless, so there is no need to do-while
-			* 	r2 = getRandomUnsigned(0, smallPopulationSize - 1);
-			* 	r3 = getRandomUnsigned(0, smallPopulationSize - 1);
-			* 	v = bigPopulation[r1] + (smallPopulation[r2] - smallPopulation[r3]) * newMutationFactor;
-			* }
-			* else {
-			* 	v = bigPopulation[r1] + (bigPopulation[r2] - bigPopulation[r3]) * newMutationFactor;
-			* }
-			*/
+				v = population[r1] + (population[r2] - population[r3]) * newMutationFactor;
+			}
+			
 
 			// Crossover factor update
 			double rand_3 = getRandomDouble(0, 1);
@@ -284,6 +284,9 @@ public:
 		size_t currentFE = 0;
 		size_t age = 0;
 
+		cout << "Currently evaluating function " << function.getName() << "\n";
+		fout << "Currently evaluating function " << function.getName() << "\n";
+		
 		while (currentFE < maxFE) {
 			currentGen++;
 			if (currentGen % 1000 == 0) {
@@ -300,7 +303,6 @@ public:
 			//		individual is equal to similarityPercentage% of Individuals from the population)
 			// - a certain threshold of function evaluations was touched, in which the best candidate did not improve
 			//		(when a new best individual is found, age becomes 0)
-
 			if (age >= ageLimitation) {
 				cout << "Age limitation hit\n";
 				fout << "Age limitation hit\n";
@@ -321,99 +323,6 @@ public:
 				initPopulation(smallPopulation, smallPopulationSize);
 				smallPopulation[0] = prevBest;
 			}
-			
-			/* NOTE: Original implementation, now switched to a function (which needs adjustment for bigPop constraints)
-			// For the big population
-			vector<Individual> newPopulation;
-			newPopulation.resize(bigPopulationSize);
-
-			for (size_t i = 0; i < bigPopulationSize; ++i) {
-				
-				double newMutationFactor;
-				double newCrossoverRate;
-
-				// Mutation factor update
-				double rand_1 = getRandomDouble(0, 1);
-				double rand_2 = getRandomDouble(0, 1);
-				if (rand_2 < mutationConstrains.chance) {
-					newMutationFactor = mutationConstrains.lowerBound + rand_1 * mutationConstrains.upperBound;
-				}
-				else {
-					newMutationFactor = mutationFactors[i];
-				}
-
-				// Apply mutation
-				size_t r1, r2, r3;
-				// NOTE: this does not take into account the idea of 
-				// r1 : [0, bigPopulationSize - 1] and r2, r3 : [0, bigPopultaionSize - 1] + [Random element from smallPopulation]
-				do {
-					// Tested. On average, it finds 3 different numbers within 1 or 2 tries (over multiple test cases, the average was around 1.62 tries).
-					r1 = getRandomUnsigned(0, bigPopulationSize - 1);
-					r2 = getRandomUnsigned(0, bigPopulationSize - 1);
-					r3 = getRandomUnsigned(0, bigPopulationSize - 1);
-				} while (r1 == r2 || r1 == r3 || r1 == i || r2 == r3 || r2 == i || r3 == i);
-
-				Individual v = bigPopulation[r1] + (bigPopulation[r2] - bigPopulation[r3]) * newMutationFactor;
-
-				//
-				// The original idea is presented below
-				//
-				// size_t r1, r2, r3;
-				// do {
-				// 	r1 = getRandomUnsigned(0, bigPopulationSize - 1);
-				// 	r2 = getRandomUnsigned(0, bigPopulationSize);
-				// 	r3 = getRandomUnsigned(0, bigPopulationSize);
-				// } while (r1 == r2 || r1 == r3 || r1 == i || r2 == r3 || r2 == i || r3 == i);
-				// 
-				// Individual v;
-				// 
-				// if (r2 == bigPopulationSize || r3 == bigPopulationSize) {
-				// 	// This time the elements will be different nontheless, so there is no need to do-while
-				// 	r2 = getRandomUnsigned(0, smallPopulationSize - 1);
-				// 	r3 = getRandomUnsigned(0, smallPopulationSize - 1);
-				// 	v = bigPopulation[r1] + (smallPopulation[r2] - smallPopulation[r3]) * newMutationFactor;
-				// }
-				// else {
-				// 	v = bigPopulation[r1] + (bigPopulation[r2] - bigPopulation[r3]) * newMutationFactor;
-				// }
-				//
-
-				// Crossover factor update
-				double rand_3 = getRandomDouble(0, 1);
-				double rand_4 = getRandomDouble(0, 1);
-				if (rand_4 < crossoverConstrains.chance) {
-					newCrossoverRate = rand_3;
-				}
-				else {
-					newCrossoverRate = crossoverRates[i];
-				}
-
-				// Apply crossover
-				size_t jRand = getRandomUnsigned(1, function.getDimensions() - 1); // Why [1, D-1] and not [0, D-1]?
-				for (size_t j = 0; j < function.getDimensions(); ++j) {
-					if (getRandomDouble(0, 1) <= newCrossoverRate || j == jRand) {
-						newPopulation[i][j] = v[j];
-					}
-					else {
-						newPopulation[i][j] = bigPopulation[i][j];
-					}
-				}
-
-				// newPopulation[i] stands for the u individual
-				if (function(newPopulation[i].get()) < function(bigPopulation[i].get())) {
-					// newPopulation[i] stays the same
-					mutationFactors[i] = newMutationFactor;
-					crossoverRates[i] = newCrossoverRate;
-				}
-				else {
-					newPopulation[i] = bigPopulation[i];
-					// mutationFactors[i] stays the same
-					// crossoverRates[i] stays the same
-				}
-
-			}
-
-			bigPopulation = newPopulation;*/
 
 			updatePopulation(bigPopulation, bigMutationFactors, bigCrossoverRates);
 			currentFE += bigPopulationSize;
@@ -433,6 +342,8 @@ public:
 			}
 			
 		}
+		
+		
 	}
 
 	// Runs the algorithm, while also handling the results.
@@ -449,8 +360,8 @@ int main()
 	// Settings for cout
 	cout << fixed << showpoint << setprecision(10);
 
-	ofstream fout("output.txt");
-	fout << fixed << showpoint << setprecision(10);
+	/*ofstream fout("output.txt");
+	fout << fixed << showpoint << setprecision(10);*/
 
 	vector<Function> functions; // difficulty ranking
 	functions.push_back(Function("Chebyshev", 1, 9, -8192, 8192)); // 2
@@ -467,15 +378,15 @@ int main()
 	ParameterConstrains mutation(0.1, 0.9, 0.5, 0.1);
 	ParameterConstrains crossover(0.1, 1.1, 0.5, 0.1);
 
+
 	auto t0 = chrono::high_resolution_clock::now();
 	for (int i = 0; i < 10; i++) {
-		if (i == 1) continue;
-		cout << "Currently evaluating function " << functions[i].getName() << "\n";
+		
 		jDE2 alg(functions[i], mutation, crossover);
 		alg.run();
 		auto t1 = chrono::high_resolution_clock::now();
 		int seconds = chrono::duration_cast<chrono::milliseconds>(t1 - t0).count() / 1000;
-		cout << "Finished current function in " << seconds / 60 << ":" << seconds % 60 << "\n";
+		cout << "finished current function in " << seconds / 60 << ":" << seconds % 60 << "\n";
 	}
 
 

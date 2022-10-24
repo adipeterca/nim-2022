@@ -5,9 +5,9 @@ Function::Function(const char* name, const int &id, const int &D, const double &
 }
 
 const double Function::operator ()(const double* x) {
-	double* returnValue = new double;
-	cec19_test_func((double* )x, returnValue, dimensions, 1, id);
-	return *returnValue;
+	double returnValue;
+	cec19_test_func((double* )x, &returnValue, dimensions, 1, id);
+	return returnValue;
 }
 
 //const double Function::operator ()(const Individual& x) {
