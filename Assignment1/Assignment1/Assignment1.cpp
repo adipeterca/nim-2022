@@ -15,6 +15,10 @@ extern double* OShift, * M, * y, * z, * x_bound;
 extern int ini_flag, n_flag, func_flag, * SS;
 
 
+void jDEThreaded(jDE100v2& alg) {
+
+}
+
 int main()
 {
 	// Settings for cout
@@ -40,23 +44,32 @@ int main()
 	ParameterConstrains crossover1(0.0, 1.1, 0.5, 0.1);
 	ParameterConstrains crossover2(1.0, 1.1, 0.5, 0.1);
 
-	int overallAccuracy = 0;
-	jDE100v2* alg;
-	for (int i = 6; i < 10; i++) {
+	for (int ii = 1; ii <= 30; ii++) {
 
-		if (i == 9) {
-			alg = new jDE100v2(functions[i], mutation2, crossover2);
-		}
-		else {
-			alg = new jDE100v2(functions[i], mutation1, crossover1);
-		}
-		overallAccuracy += alg->run();
+		// Color codes
+		// cout << "\x1B[32m" << "Starting testing for run " << ii << "\033[0m" << "\n\n"; // green
+		cout << "\x1B[36m" << "----------------- Starting testing for run " << ii << " ----------------- " << "\033[0m" << "\n\n"; // blue
+		int overallAccuracy = 0;
+		jDE100v2* alg;
+		for (int i = 0; i < 10; i++) {
 
-		delete alg;
+			// Skip these functions
+			if (i == 7 || i == 8 || i == 9) continue;
+
+			if (i == 9) {
+				alg = new jDE100v2(functions[i], mutation2, crossover2);
+			}
+			else {
+				alg = new jDE100v2(functions[i], mutation1, crossover1);
+			}
+			overallAccuracy += alg->run(ii);
+
+			delete alg;
+		}
+		 ofstream output("overall_output_" + to_string(ii) + ".txt");
+		 output << overallAccuracy;
+		cout << "Finally, overall accuracy: " << overallAccuracy << "\n\n";
 	}
-	ofstream output("overall_output.txt");
-	output << overallAccuracy;
-	cout << "Finally, overall accuracy: " << overallAccuracy;
 
 
 	// Idei de improvement:

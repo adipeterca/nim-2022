@@ -243,9 +243,9 @@ void jDE100v2::algorithm() {
 	}
 }
 
-int jDE100v2::run() {
+int jDE100v2::run(int runCount) {
 	
-	fout.open("jDE100v2_" + function.getName() + ".txt");
+	fout.open(to_string(runCount) + "_jDE100v2_" + function.getName() + ".txt");
 
 	// No need to print to file, because its name already says what function it is.
 	cout << "Created jDE100v2 instance with the following parameters:\n";
@@ -262,6 +262,7 @@ int jDE100v2::run() {
 	double value = function(best.get());
 	int correctDigits = countCorrectDigits(value);
 	cout << "Best value found: " << value << ", with a total number of correct digits of " << correctDigits << " / 10\n";
+	fout << "Best value found: " << value << ", with a total number of correct digits of " << correctDigits << " / 10 , in point " << best << "\n";
 
 	return correctDigits;
 }

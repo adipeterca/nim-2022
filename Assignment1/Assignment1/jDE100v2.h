@@ -134,8 +134,9 @@ public:
 	/// Placeholder function that runs the behind-the-scenes algorithm, while also handling
 	/// stuff like information logging and (in a future version) error handling (lolz).
 	/// </summary>
+	/// <param name="runCount">variable used for numbering each file according to the run they belong to</param>
 	/// <returns>number of correct digits for the final solution</returns>
-	int run();
+	int run(int runCount);
 };
 
 #endif
