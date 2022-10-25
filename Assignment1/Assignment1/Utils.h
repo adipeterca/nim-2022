@@ -6,6 +6,10 @@
 #include <sstream>
 #include <iomanip>
 
+#define BLUE_START "\x1B[36m"
+#define RED_START "\x1B[31m"
+#define COLOR_END "\033[0m"
+
 using namespace std;
 
 // Default value for a constant very close to zero.

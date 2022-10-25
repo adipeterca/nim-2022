@@ -249,7 +249,7 @@ int jDE100v2::run(int runCount) {
 
 	// No need to print to file, because its name already says what function it is.
 	cout << "Created jDE100v2 instance with the following parameters:\n";
-	cout << "Function to evaluate: " + function.getName() + "\n"; 
+	cout << "Function to evaluate: " << RED_START << function.getName() << COLOR_END << "\n"; 
 	
 	// Run the algorithm
 	auto t1 = chrono::high_resolution_clock::now();
@@ -257,11 +257,11 @@ int jDE100v2::run(int runCount) {
 	Individual best = *findBestOverall(true);
 	auto t2 = chrono::high_resolution_clock::now();
 	size_t seconds = chrono::duration_cast<chrono::seconds>(t2 - t1).count();
-	cout << "Overall time: " << seconds / 60 << " minutes and " << seconds % 60 << " seconds.\n";
+	cout << "Overall time: " << RED_START << seconds / 60 << COLOR_END << " minutes and " << RED_START << seconds % 60 << COLOR_END << " seconds.\n";
 
 	double value = function(best.get());
 	int correctDigits = countCorrectDigits(value);
-	cout << "Best value found: " << value << ", with a total number of correct digits of " << correctDigits << " / 10\n";
+	cout << "Best value found: " << value << ", with a total number of correct digits of " << RED_START << correctDigits << " / 10 " << COLOR_END << "\n\n";
 	fout << "Best value found: " << value << ", with a total number of correct digits of " << correctDigits << " / 10 , in point " << best << "\n";
 
 	return correctDigits;

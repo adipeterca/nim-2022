@@ -48,13 +48,13 @@ int main()
 
 		// Color codes
 		// cout << "\x1B[32m" << "Starting testing for run " << ii << "\033[0m" << "\n\n"; // green
-		cout << "\x1B[36m" << "----------------- Starting testing for run " << ii << " ----------------- " << "\033[0m" << "\n\n"; // blue
+		cout << BLUE_START << "----------------- Starting testing for run " << ii << " ----------------- " << COLOR_END << "\n\n"; // blue
 		int overallAccuracy = 0;
 		jDE100v2* alg;
 		for (int i = 0; i < 10; i++) {
 
 			// Skip these functions
-			if (i == 7 || i == 8 || i == 9) continue;
+			if (i == 6 || i == 8 || i == 9) continue;
 
 			if (i == 9) {
 				alg = new jDE100v2(functions[i], mutation2, crossover2);
