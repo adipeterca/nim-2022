@@ -124,7 +124,6 @@ void jDE100v2::updatePopulation(vector<Individual>& population, vector<double>& 
 
 	}
 	population = newPopulation;
-
 }
 
 Individual* jDE100v2::findBestOverall(bool searchAgain) {
@@ -179,6 +178,11 @@ void jDE100v2::algorithm() {
 	smallCrossoverRates = vector<double>(smallPopulationSize, crossoverConstrains.initValue);
 
 	Individual* bestOverall = findBestOverall();
+	// Variables used for improving best's stagnation (multitple generation where the best value does NOT improve)
+	double bestValue;
+	double prevBestValue = -1.0;
+	const int allowedBestStagnations = 2;
+	int currentStagnations = 0;
 
 	size_t currentGen = 0;
 	size_t currentFE = 0;
@@ -189,6 +193,24 @@ void jDE100v2::algorithm() {
 		if (currentGen % 1000 == 0) {
 			// cout << "Currently at generation " << currentGen << "\n";
 			if (currentGen % 10000 == 0) {
+
+				bestValue = function(findBestOverall(true)->get());
+				if (prevBestValue == -1.0 || prevBestValue != bestValue) {
+					prevBestValue = bestValue;
+					// Consider only consecutive stagnations
+					currentStagnations = 0;
+				}
+				else if (prevBestValue == bestValue) {
+					currentStagnations++;
+					cout << "current stagnations : " << currentStagnations << " / " << allowedBestStagnations << "\n";
+					if (currentStagnations == allowedBestStagnations) {
+						initPopulation(bigPopulation, bigPopulationSize);
+						bigBest = findBest(bigPopulation);
+						currentStagnations = 0;
+						cout << "Re init big population\n";
+					}
+				}
+
 				cout << "Best so far: " << function(findBestOverall(true)->get()) << "\n";
 				cout << "Currently at generation " << setw(15) << currentGen << " with currentFE at " << setw(15) << currentFE << "\n";
 			}
@@ -216,18 +238,21 @@ void jDE100v2::algorithm() {
 			// cout << "Similarity percentage hit\n";
 			fout << "Similarity percentage hit\n";
 			initPopulation(bigPopulation, bigPopulationSize);
+			bigBest = findBest(bigPopulation);
 		}
 
 		// Check for a reinitialization of smallPopulation
 		if (bestPercentage(smallPopulation, smallBest) >= similarityPercentage) {
 			// cout << "Similarity percentage for small hit\n";
 			fout << "Similarity percentage for small hit\n";
-			Individual prevBest = *smallBest;
+			Individual prevBest = *findBest(smallPopulation);
 			initPopulation(smallPopulation, smallPopulationSize);
 			smallPopulation[0] = prevBest;
+			smallBest = findBest(smallPopulation);
 		}
 
 		updatePopulation(bigPopulation, bigMutationFactors, bigCrossoverRates);
+		bigBest = findBest(bigPopulation);
 		currentFE += bigPopulationSize;
 
 		// Is the best Individual present in the bigPopulation?
@@ -242,6 +267,7 @@ void jDE100v2::algorithm() {
 		for (size_t k = 0; k < M; ++k) {
 			updatePopulation(smallPopulation, smallMutationFactors, smallCrossoverRates, false);
 			currentFE += smallPopulationSize; // Could be optimized, but I find it clearer this way.
+			smallBest = findBest(smallPopulation);
 		}
 	}
 }
@@ -250,10 +276,6 @@ int jDE100v2::run(int runCount) {
 	
 	fout.open(to_string(runCount) + "_jDE100v2_" + function.getName() + ".txt");
 	fout << fixed << showpoint << setprecision(10);
-
-	// No need to print to file, because its name already says what function it is.
-	cout << "Created jDE100v2 instance with the following parameters:\n";
-	cout << "Function to evaluate: " << RED_START << function.getName() << COLOR_END << "\n"; 
 	
 	// Run the algorithm
 	auto t1 = chrono::high_resolution_clock::now();
@@ -262,6 +284,7 @@ int jDE100v2::run(int runCount) {
 	auto t2 = chrono::high_resolution_clock::now();
 	size_t seconds = chrono::duration_cast<chrono::seconds>(t2 - t1).count();
 	cout << "Overall time: " << RED_START << seconds / 60 << COLOR_END << " minutes and " << RED_START << seconds % 60 << COLOR_END << " seconds.\n";
+	fout << "Overall time: " << seconds / 60 << " minutes and " << seconds % 60 << " seconds.\n";
 
 	double value = function(best.get());
 	int correctDigits = countCorrectDigits(value);

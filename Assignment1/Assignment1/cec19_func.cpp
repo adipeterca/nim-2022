@@ -47,6 +47,7 @@ void cec19_test_func(double* x, double* f, int nx, int mx, int func_num)
 	{
 		FILE* fpt;
 		char FileName[256];
+		// printf("\t\t\t\t\t\t\t\tTrying to free (M, OShift, y, z, x_bound) & then allocate (y, z, x_bound) \n");
 		free(M);
 		free(OShift);
 		free(y);
@@ -55,12 +56,14 @@ void cec19_test_func(double* x, double* f, int nx, int mx, int func_num)
 		y = (double*)malloc(sizeof(double) * nx);
 		z = (double*)malloc(sizeof(double) * nx);
 		x_bound = (double*)malloc(sizeof(double) * nx);
+		// printf("\t\t\t\t\t\t\t\tFreed (M, OShift, y, z, x_bound) & then allocated (y, z, x_bound) \n");
 		for (i = 0; i < nx; i++)
 			x_bound[i] = 100.0;
 
 		if (!(nx == 2 || nx == 10 || nx == 9 || nx == 16 || nx == 18))
 		{
 			printf("Error: Test functions are only defined for D=10, 9, 16, 18 \n F1 is defined on D=9 \n F2 is defined on D=16 \n F3 is defined on D=18 \n F4-F10 are defined on D=10.");
+			exit(-1);
 		}
 
 
@@ -72,10 +75,15 @@ void cec19_test_func(double* x, double* f, int nx, int mx, int func_num)
 			if (fpt == NULL)
 			{
 				printf("\n Error: Cannot open input file for reading \n");
+				exit(-1);
 			}
+			// printf("\t\t\t\t\t\t\t\tTrying to allocate M\n");
 			M = (double*)malloc(nx * nx * sizeof(double));
-			if (M == NULL)
+			// printf("\t\t\t\t\t\t\t\tAllocated M\n");
+			if (M == NULL) {
 				printf("\nError: there is insufficient memory available!\n");
+				exit(-1);
+			}
 			for (i = 0; i < nx * nx; i++)
 			{
 				fscanf(fpt, "%lf", &M[i]);
@@ -92,11 +100,16 @@ void cec19_test_func(double* x, double* f, int nx, int mx, int func_num)
 			if (fpt == NULL)
 			{
 				printf("\n Error: Cannot open input file for reading \n");
+				exit(0);
 			}
 
+			// printf("\t\t\t\t\t\t\t\tTrying to allocate OShift\n");
 			OShift = (double*)malloc(nx * sizeof(double));
-			if (OShift == NULL)
+			// printf("\t\t\t\t\t\t\t\tAllocated OShift\n");
+			if (OShift == NULL) {
 				printf("\nError: there is insufficient memory available!\n");
+				exit(0);
+			}
 			for (i = 0; i < nx; i++)
 			{
 				fscanf(fpt, "%lf", &OShift[i]);
@@ -108,7 +121,7 @@ void cec19_test_func(double* x, double* f, int nx, int mx, int func_num)
 		n_flag = nx;
 		func_flag = func_num;
 		ini_flag = 1;
-		//printf("Function has been initialized!\n");
+		// printf("Function has been initialized!\n");
 	}
 
 
@@ -249,6 +262,7 @@ inline void weierstrass_func(double* x, double* f, int nx, double* Os, double* M
 		}
 		f[0] += sum;
 	}
+	// Se presupune ca nx e mereu mai mare ca zero
 	f[0] -= nx * sum2;
 }
 
@@ -266,23 +280,23 @@ inline void rastrigin_func(double* x, double* f, int nx, double* Os, double* Mr,
 	}
 }
 
-inline void step_rastrigin_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Noncontinuous Rastrigin's  */
-{
-	int i;
-	f[0] = 0.0;
-	for (i = 0; i < nx; i++)
-	{
-		if (fabs(y[i] - Os[i]) > 0.5)
-			y[i] = Os[i] + floor(2 * (y[i] - Os[i]) + 0.5) / 2;
-	}
-
-	sr_func(x, z, nx, Os, Mr, 5.12 / 100.0, s_flag, r_flag); /* shift and rotate */
-
-	for (i = 0; i < nx; i++)
-	{
-		f[0] += (z[i] * z[i] - 10.0 * cos(2.0 * PI * z[i]) + 10.0);
-	}
-}
+//inline void step_rastrigin_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Noncontinuous Rastrigin's  */
+//{
+//	int i;
+//	f[0] = 0.0;
+//	for (i = 0; i < nx; i++)
+//	{
+//		if (fabs(y[i] - Os[i]) > 0.5)
+//			y[i] = Os[i] + floor(2 * (y[i] - Os[i]) + 0.5) / 2;
+//	}
+//
+//	sr_func(x, z, nx, Os, Mr, 5.12 / 100.0, s_flag, r_flag); /* shift and rotate */
+//
+//	for (i = 0; i < nx; i++)
+//	{
+//		f[0] += (z[i] * z[i] - 10.0 * cos(2.0 * PI * z[i]) + 10.0);
+//	}
+//}
 
 inline void schwefel_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Schwefel's  */
 {
@@ -316,7 +330,7 @@ inline void schwefel_func(double* x, double* f, int nx, double* Os, double* Mr, 
 
 
 
-inline void escaffer6_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Expanded Scaffer¡¯s F6  */
+inline void escaffer6_func(double* x, double* f, int nx, double* Os, double* Mr, int s_flag, int r_flag) /* Expanded Scafferï¿½ï¿½s F6  */
 {
 	int i;
 	double temp1, temp2;
@@ -421,48 +435,48 @@ inline void sr_func(double* x, double* sr_x, int nx, double* Os, double* Mr, dou
 	}
 }
 
-inline void asyfunc(double* x, double* xasy, int nx, double beta)
-{
-	int i;
-	for (i = 0; i < nx; i++)
-	{
-		if (x[i] > 0)
-			xasy[i] = pow(x[i], 1.0 + beta * i / (nx - 1) * pow(x[i], 0.5));
-	}
-}
+//inline void asyfunc(double* x, double* xasy, int nx, double beta)
+//{
+//	int i;
+//	for (i = 0; i < nx; i++)
+//	{
+//		if (x[i] > 0)
+//			xasy[i] = pow(x[i], 1.0 + beta * i / (nx - 1) * pow(x[i], 0.5));
+//	}
+//}
 
-inline void oszfunc(double* x, double* xosz, int nx)
-{
-	int i, sx;
-	double c1, c2, xx;
-	for (i = 0; i < nx; i++)
-	{
-		if (i == 0 || i == nx - 1)
-		{
-			if (x[i] != 0)
-				xx = log(fabs(x[i]));
-			if (x[i] > 0)
-			{
-				c1 = 10;
-				c2 = 7.9;
-			}
-			else
-			{
-				c1 = 5.5;
-				c2 = 3.1;
-			}
-			if (x[i] > 0)
-				sx = 1;
-			else if (x[i] == 0)
-				sx = 0;
-			else
-				sx = -1;
-			xosz[i] = sx * exp(xx + 0.049 * (sin(c1 * xx) + sin(c2 * xx)));
-		}
-		else
-			xosz[i] = x[i];
-	}
-}
+//inline void oszfunc(double* x, double* xosz, int nx)
+//{
+//	int i, sx;
+//	double c1, c2, xx;
+//	for (i = 0; i < nx; i++)
+//	{
+//		if (i == 0 || i == nx - 1)
+//		{
+//			if (x[i] != 0)
+//				xx = log(fabs(x[i]));
+//			if (x[i] > 0)
+//			{
+//				c1 = 10;
+//				c2 = 7.9;
+//			}
+//			else
+//			{
+//				c1 = 5.5;
+//				c2 = 3.1;
+//			}
+//			if (x[i] > 0)
+//				sx = 1;
+//			else if (x[i] == 0)
+//				sx = 0;
+//			else
+//				sx = -1;
+//			xosz[i] = sx * exp(xx + 0.049 * (sin(c1 * xx) + sin(c2 * xx)));
+//		}
+//		else
+//			xosz[i] = x[i];
+//	}
+//}
 
 
 

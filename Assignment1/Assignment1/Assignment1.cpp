@@ -14,11 +14,6 @@ using namespace std;
 extern double* OShift, * M, * y, * z, * x_bound;
 extern int ini_flag, n_flag, func_flag, * SS;
 
-
-void jDEThreaded(jDE100v2& alg) {
-
-}
-
 int main()
 {
 	// Settings for cout
@@ -39,36 +34,34 @@ int main()
 	functions.push_back(Function("Happy Cat", 9, 10, -100, 100)); // 10
 	functions.push_back(Function("Ackely", 10, 10, -100, 100)); // 1
 	
-	ParameterConstrains mutation1(0.18, 1.1, 0.5, 0.1);
-	ParameterConstrains mutation2(0.0015, 1.1, 0.5, 0.3);
+	ParameterConstrains mutation1(0.2, 1.1, 0.5, 0.1);
+	ParameterConstrains mutation2(0.002, 1.1, 0.5, 0.3);
 	ParameterConstrains crossover1(0.0, 1.1, 0.5, 0.1);
-	ParameterConstrains crossover2(1.0, 1.1, 0.5, 0.1);
+	ParameterConstrains crossover2(1.0, 1.1, 0.5, 0.3);
 
-	for (int ii = 3; ii <= 30; ii++) {
+	jDE100v2* alg;
+	int overallAccuracy;
+	for (int functionId = 8; functionId < 10; functionId++) {
+		overallAccuracy = 0;
 
-		// Color codes
-		// cout << "\x1B[32m" << "Starting testing for run " << ii << "\033[0m" << "\n\n"; // green
-		cout << BLUE_START << "----------------- Starting testing for run " << ii << " ----------------- " << COLOR_END << "\n\n"; // blue
-		int overallAccuracy = 0;
-		jDE100v2* alg;
-		for (int i = 4; i < 10; i++) {
-
-			// Skip these functions
-			if (i == 6 || i == 8 || i == 9) continue;
-
-			if (i == 9) {
-				alg = new jDE100v2(functions[i], mutation2, crossover2);
-			}
-			else {
-				alg = new jDE100v2(functions[i], mutation1, crossover1);
-			}
-			overallAccuracy += alg->run(ii);
-
-			delete alg;
+		if (functionId == 9) {
+			alg = new jDE100v2(functions[functionId], mutation2, crossover2);
 		}
-		ofstream output("overall_output_" + to_string(ii) + ".txt");
-		output << overallAccuracy;
-		cout << "Finally, overall accuracy: " << overallAccuracy << "\n\n";
+		else {
+			alg = new jDE100v2(functions[functionId], mutation1, crossover1);
+		}
+
+		for (int ii = 1; ii <= 50; ii++) {
+			cout << BLUE_START << "----------------- Starting testing for run " << setw(2) << ii << " with function " << COLOR_END;
+			cout << RED_START << functions[functionId].getName() << COLOR_END;
+			cout << BLUE_START << " ----------------- " << COLOR_END << "\n";
+			ini_flag = 0;
+			overallAccuracy += alg->run(ii);
+		}
+		cout << "\nFinally, overall accuracy for " << YELLOW_START << functions[functionId].getName() << COLOR_END << ": ";
+		cout << YELLOW_START << overallAccuracy / 30.0 << "%" << COLOR_END << "\n\n\n\n";
+
+		delete alg;
 	}
 
 
