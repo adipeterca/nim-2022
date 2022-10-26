@@ -61,7 +61,7 @@ private:
 
 	// Used for reinitialization (values taken from the research paper)
 	const double similarityPercentage = 0.25;
-	const size_t ageLimitation = 1e9;
+	const size_t ageLimitation = 1e7;
 
 	// For overall logging & debugging information (creates a file based on the function's name)
 	ofstream fout;
@@ -127,7 +127,7 @@ public:
 			ParameterConstrains& crossover,
 			const size_t bigPopulationSize = 1000,
 			const size_t smallPopulationSize = 25,
-			const unsigned long long int maxFE = 1e12);
+			const unsigned long long int maxFE = 1e9);
 
 
 	/// <summary>

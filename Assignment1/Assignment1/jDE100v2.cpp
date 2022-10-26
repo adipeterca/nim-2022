@@ -194,7 +194,10 @@ void jDE100v2::algorithm() {
 			}
 			fout << "Best so far: " << function(findBestOverall(true)->get()) << " in generation " << currentGen << "\n";
 			fout.flush();
-			if (function(smallBest->get()) - 1.000000000 <= EPSILON || function(bigBest->get()) - 1.000000000 <= EPSILON) {
+
+			double smallValue = function(smallBest->get());
+			double bigValue = function(bigBest->get());
+			if (countCorrectDigits(smallValue) == 10 || countCorrectDigits(bigValue) == 10) {
 				break;
 			}
 		}
@@ -246,6 +249,7 @@ void jDE100v2::algorithm() {
 int jDE100v2::run(int runCount) {
 	
 	fout.open(to_string(runCount) + "_jDE100v2_" + function.getName() + ".txt");
+	fout << fixed << showpoint << setprecision(10);
 
 	// No need to print to file, because its name already says what function it is.
 	cout << "Created jDE100v2 instance with the following parameters:\n";

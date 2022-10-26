@@ -40,18 +40,18 @@ int main()
 	functions.push_back(Function("Ackely", 10, 10, -100, 100)); // 1
 	
 	ParameterConstrains mutation1(0.18, 1.1, 0.5, 0.1);
-	ParameterConstrains mutation2(0.0015, 1.1, 0.5, 0.1);
+	ParameterConstrains mutation2(0.0015, 1.1, 0.5, 0.3);
 	ParameterConstrains crossover1(0.0, 1.1, 0.5, 0.1);
 	ParameterConstrains crossover2(1.0, 1.1, 0.5, 0.1);
 
-	for (int ii = 1; ii <= 30; ii++) {
+	for (int ii = 3; ii <= 30; ii++) {
 
 		// Color codes
 		// cout << "\x1B[32m" << "Starting testing for run " << ii << "\033[0m" << "\n\n"; // green
 		cout << BLUE_START << "----------------- Starting testing for run " << ii << " ----------------- " << COLOR_END << "\n\n"; // blue
 		int overallAccuracy = 0;
 		jDE100v2* alg;
-		for (int i = 0; i < 10; i++) {
+		for (int i = 4; i < 10; i++) {
 
 			// Skip these functions
 			if (i == 6 || i == 8 || i == 9) continue;
@@ -66,8 +66,8 @@ int main()
 
 			delete alg;
 		}
-		 ofstream output("overall_output_" + to_string(ii) + ".txt");
-		 output << overallAccuracy;
+		ofstream output("overall_output_" + to_string(ii) + ".txt");
+		output << overallAccuracy;
 		cout << "Finally, overall accuracy: " << overallAccuracy << "\n\n";
 	}
 
