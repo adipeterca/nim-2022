@@ -11,16 +11,13 @@
 
 using namespace std;
 
-extern double* OShift, * M, * y, * z, * x_bound;
-extern int ini_flag, n_flag, func_flag, * SS;
+ extern double* OShift, * M, * y, * z, * x_bound;
+ extern int ini_flag, n_flag, func_flag, * SS;
 
 int main()
 {
 	// Settings for cout
 	cout << fixed << showpoint << setprecision(10);
-
-	/*ofstream fout("output.txt");
-	fout << fixed << showpoint << setprecision(10);*/
 
 	vector<Function> functions; // difficulty ranking
 	functions.push_back(Function("Chebyshev", 1, 9, -8192, 8192)); // 2 -> a gasit MIN
@@ -34,34 +31,55 @@ int main()
 	functions.push_back(Function("Happy Cat", 9, 10, -100, 100)); // 10
 	functions.push_back(Function("Ackely", 10, 10, -100, 100)); // 1
 	
-	ParameterConstrains mutation1(0.2, 1.1, 0.5, 0.1);
-	ParameterConstrains mutation2(0.002, 1.1, 0.5, 0.3);
-	ParameterConstrains crossover1(0.0, 1.1, 0.5, 0.1);
-	ParameterConstrains crossover2(1.0, 1.1, 0.5, 0.3);
-
+	ParameterConstrains* mutation, * crossover;
 	jDE100v2* alg;
-	int overallAccuracy;
-	for (int functionId = 8; functionId < 10; functionId++) {
-		overallAccuracy = 0;
 
-		if (functionId == 9) {
-			alg = new jDE100v2(functions[functionId], mutation2, crossover2);
+	int overallAccuracy;
+	int numberOfRuns = 50;
+	
+	// the first 6 functions are already done
+	for (int functionId = 6; functionId < 10; functionId++) {
+		overallAccuracy = 0;
+		
+		// Skip some functions
+		if (functionId != 6 && functionId != 9) continue;
+
+		if (functionId == 3) {
+			mutation = new ParameterConstrains(0.2, 1.1, 0.5, 0.1);
+			crossover = new ParameterConstrains(0.0, 1.1, 0.9, 0.1);
+		}
+		else if (functionId == 6) {
+			mutation = new ParameterConstrains(0.2, 1.1, 0.5, 0.1);
+			crossover = new ParameterConstrains(0.0, 1.1, 0.9, 0.1);
+		}
+		else if (functionId == 7) {
+			mutation = new ParameterConstrains(0.1, 1.1, 0.5, 0.1);
+			crossover = new ParameterConstrains(0.1, 1.1, 0.9, 0.1);
+		}
+		else if (functionId == 8) {
+			mutation = new ParameterConstrains(0.001, 1.1, 0.5, 0.1);
+			crossover = new ParameterConstrains(1.0, 1.1, 0.9, 0.1);
 		}
 		else {
-			alg = new jDE100v2(functions[functionId], mutation1, crossover1);
+			mutation = new ParameterConstrains(0.15, 1.1, 0.5, 0.1);
+			crossover = new ParameterConstrains(0.0, 1.1, 0.9, 0.1);
 		}
 
-		for (int ii = 1; ii <= 50; ii++) {
+		alg = new jDE100v2(functions[functionId], *mutation, *crossover);
+		for (size_t ii = 1; ii <= numberOfRuns; ii++) {
 			cout << BLUE_START << "----------------- Starting testing for run " << setw(2) << ii << " with function " << COLOR_END;
 			cout << RED_START << functions[functionId].getName() << COLOR_END;
 			cout << BLUE_START << " ----------------- " << COLOR_END << "\n";
-			ini_flag = 0;
+			
 			overallAccuracy += alg->run(ii);
 		}
+	
 		cout << "\nFinally, overall accuracy for " << YELLOW_START << functions[functionId].getName() << COLOR_END << ": ";
-		cout << YELLOW_START << overallAccuracy / 30.0 << "%" << COLOR_END << "\n\n\n\n";
+		cout << YELLOW_START << overallAccuracy / (double)(numberOfRuns) << "%" << COLOR_END << "\n\n\n\n";
 
 		delete alg;
+		delete mutation;
+		delete crossover;
 	}
 
 

@@ -10,9 +10,9 @@ double getRandomDouble(const double min, const double max) {
 		generator2.seed(generator());
 		created = true;
 	}
-	generator2.discard(31337);
 	uniform_real_distribution<> distribution(min, max);
 	return distribution(generator2);
+
 }
 
 size_t getRandomUnsigned(const size_t min, const size_t max) {
@@ -32,7 +32,7 @@ int countCorrectDigits(double value) {
 	string strValue = os.str();
 
 	// If the first is not 1, all values are wrong.
-	if (strValue[0] != '1') return 0;
+	if (!(strValue[0] == '1' && strValue[1] == '.')) return 0;
 
 	int result = 1;
 	for (int i = 2; i < strValue.size(); ++i) {

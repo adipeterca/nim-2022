@@ -181,7 +181,7 @@ void jDE100v2::algorithm() {
 	// Variables used for improving best's stagnation (multitple generation where the best value does NOT improve)
 	double bestValue;
 	double prevBestValue = -1.0;
-	const int allowedBestStagnations = 2;
+	const int allowedBestStagnations = 5;
 	int currentStagnations = 0;
 
 	size_t currentGen = 0;
@@ -191,35 +191,35 @@ void jDE100v2::algorithm() {
 	while (currentFE < maxFE) {
 		currentGen++;
 		if (currentGen % 1000 == 0) {
-			// cout << "Currently at generation " << currentGen << "\n";
-			if (currentGen % 10000 == 0) {
 
-				bestValue = function(findBestOverall(true)->get());
-				if (prevBestValue == -1.0 || prevBestValue != bestValue) {
-					prevBestValue = bestValue;
-					// Consider only consecutive stagnations
-					currentStagnations = 0;
-				}
-				else if (prevBestValue == bestValue) {
-					currentStagnations++;
-					cout << "current stagnations : " << currentStagnations << " / " << allowedBestStagnations << "\n";
-					if (currentStagnations == allowedBestStagnations) {
-						initPopulation(bigPopulation, bigPopulationSize);
-						bigBest = findBest(bigPopulation);
-						currentStagnations = 0;
-						cout << "Re init big population\n";
-					}
-				}
-
-				cout << "Best so far: " << function(findBestOverall(true)->get()) << "\n";
-				cout << "Currently at generation " << setw(15) << currentGen << " with currentFE at " << setw(15) << currentFE << "\n";
+			bestValue = function(findBestOverall(true)->get());
+			if (prevBestValue == -1.0 || prevBestValue != bestValue) {
+				prevBestValue = bestValue;
+				// Consider only consecutive stagnations
+				currentStagnations = 0;
 			}
-			fout << "Best so far: " << function(findBestOverall(true)->get()) << " in generation " << currentGen << "\n";
+			else if (prevBestValue == bestValue) {
+				currentStagnations++;
+				cout << "Current stagnations : " << currentStagnations << " / " << allowedBestStagnations << "\n";
+				if (currentStagnations == allowedBestStagnations) {
+					initPopulation(bigPopulation, bigPopulationSize);
+					bigBest = findBest(bigPopulation);
+					currentStagnations = 0;
+					cout << YELLOW_START << "Re-init big population\n\n" << COLOR_END;
+				}
+			}
+
+			cout << "\tBest so far: " << bestValue << "\n";
+			cout << "\tCurrently at generation " << setw(10) << currentGen;
+			cout << " with FE% at ";
+			// To not modify the cout precision
+			printf("%.2f", currentFE / double(maxFE) * 100);
+			cout << "%\n";
+
+			fout << "Best so far: " << bestValue << " in generation " << currentGen << "\n";
 			fout.flush();
 
-			double smallValue = function(smallBest->get());
-			double bigValue = function(bigBest->get());
-			if (countCorrectDigits(smallValue) == 10 || countCorrectDigits(bigValue) == 10) {
+			if (countCorrectDigits(bestValue) == 10) {
 				break;
 			}
 		}
@@ -229,7 +229,7 @@ void jDE100v2::algorithm() {
 		// - a certain threshold of function evaluations was touched, in which the best candidate did not improve
 		//		(when a new best individual is found, age becomes 0)
 		if (age >= ageLimitation) {
-			// cout << "Age limitation hit\n";
+			cout << "Age limitation hit\n";
 			fout << "Age limitation hit\n";
 			initPopulation(bigPopulation, bigPopulationSize);
 			age = 0;
