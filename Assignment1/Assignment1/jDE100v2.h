@@ -54,7 +54,7 @@ private:
 	Function function;
 
 	// Maximum number of function evaluations (this is a stopping criterion for the overall algorithm)
-	const unsigned long long int maxFE;
+	const unsigned long long int maxFE = 1e8;
 
 	// The multiplier between bigPopulatione and smallPopulation vector sizes
 	const size_t M;
@@ -127,7 +127,7 @@ public:
 			ParameterConstrains& crossover,
 			const size_t bigPopulationSize = 1000,
 			const size_t smallPopulationSize = 25,
-			const unsigned long long int maxFE = 1e9);
+			const unsigned long long int maxFE = 1e8);
 
 
 	/// <summary>

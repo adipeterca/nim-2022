@@ -9,7 +9,7 @@ inline void ackley_func(double*, double*, int, double*, double*, int, int); /* A
 inline void rastrigin_func(double*, double*, int, double*, double*, int, int); /* Rastrigin's  */
 inline void weierstrass_func(double*, double*, int, double*, double*, int, int); /* Weierstrass's  */
 inline void schwefel_func(double*, double*, int, double*, double*, int, int); /* Schwefel's */
-inline void escaffer6_func(double*, double*, int, double*, double*, int, int); /* Expanded Scaffer¡¯s F6  */
+inline void escaffer6_func(double*, double*, int, double*, double*, int, int); /* Expanded Scafferï¿½ï¿½s F6  */
 inline void happycat_func(double*, double*, int, double*, double*, int, int); /* HappyCat */
 inline void griewank_func(double*, double*, int, double*, double*, int, int); /* Griewank's  */
 

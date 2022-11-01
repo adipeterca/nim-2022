@@ -632,6 +632,3 @@ inline void Chebyshev(double* x, int D, double* f)  // Storn's Tchebychev - a 2n
 	f[0] += sum;
 
 }
-
-
-
