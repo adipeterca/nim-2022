@@ -1,0 +1,10 @@
+Best so far: 1.0098646721 in generation 1000
+Best so far: 1.0098646721 in generation 2000
+Best so far: 1.0054595137 in generation 3000
+Best so far: 1.0013197206 in generation 4000
+Best so far: 1.0007825460 in generation 5000
+Best so far: 1.0002383161 in generation 6000
+Best so far: 1.0000286510 in generation 7000
+Best so far: 1.0000000000 in generation 8000
+Overall time: 0 minutes and 24 seconds.
+Best value found: 1.0000000000, with a total number of correct digits of 10 / 10 , in point [-16.7999103340, 43.9069642733, 24.3484918532, -54.8974534720, 58.4994418035, 0.1184568211, 70.9037437974, -0.7779657479, 44.7296871094, -68.1487747241]
