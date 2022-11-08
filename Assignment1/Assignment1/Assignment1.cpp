@@ -35,14 +35,14 @@ int main()
 	jDE100v2* alg;
 
 	int overallAccuracy;
-	int numberOfRuns = 50;
+	int numberOfRuns = 10;
 	
 	// the first 6 functions are already done
-	for (int functionId = 6; functionId < 10; functionId++) {
+	for (int functionId = 5; functionId < 6; functionId++) {
 		overallAccuracy = 0;
 		
 		// Skip some functions
-		if (functionId != 6 && functionId != 9) continue;
+		// if (functionId != 1 && functionId != 9) continue;
 
 		if (functionId == 3) {
 			mutation = new ParameterConstrains(0.2, 1.1, 0.5, 0.1);

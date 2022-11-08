@@ -145,6 +145,7 @@
     <ClInclude Include="Individual.h" />
     <ClInclude Include="jDE100.h" />
     <ClInclude Include="jDE100v2.h" />
+    <ClInclude Include="PSO.h" />
     <ClInclude Include="SDE.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>

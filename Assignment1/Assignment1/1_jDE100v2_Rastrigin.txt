@@ -1,0 +1,3 @@
+Best so far: 1.0000000000 in generation 1000
+Overall time: 0 minutes and 3 seconds.
+Best value found: 1.0000000000, with a total number of correct digits of 10 / 10 , in point [43.4536135085, -75.1178609647, 54.1109174255, 2.1893627025, -3.3813797451, -30.8491653621, 78.0775925610, -69.9019984969, 37.1114560211, 52.2410205017]

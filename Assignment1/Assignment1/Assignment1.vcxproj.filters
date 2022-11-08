@@ -68,5 +68,8 @@
     <ClInclude Include="jDE100v2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PSO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
