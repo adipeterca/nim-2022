@@ -7,6 +7,7 @@
 #include "cec19_func.h"
 #include "Utils.h"
 #include "jDE100v2.h"
+#include "PSO.h"
 #pragma warning(disable:4996)
 
 using namespace std;
@@ -31,61 +32,10 @@ int main()
 	functions.push_back(Function("Happy Cat", 9, 10, -100, 100)); // 10
 	functions.push_back(Function("Ackely", 10, 10, -100, 100)); // 1
 	
-	ParameterConstrains* mutation, * crossover;
-	jDE100v2* alg;
-
-	int overallAccuracy;
-	int numberOfRuns = 10;
-	
-	// the first 6 functions are already done
-	for (int functionId = 5; functionId < 6; functionId++) {
-		overallAccuracy = 0;
-		
-		// Skip some functions
-		// if (functionId != 1 && functionId != 9) continue;
-
-		if (functionId == 3) {
-			mutation = new ParameterConstrains(0.2, 1.1, 0.5, 0.1);
-			crossover = new ParameterConstrains(0.0, 1.1, 0.9, 0.1);
-		}
-		else if (functionId == 6) {
-			mutation = new ParameterConstrains(0.2, 1.1, 0.5, 0.1);
-			crossover = new ParameterConstrains(0.0, 1.1, 0.9, 0.1);
-		}
-		else if (functionId == 7) {
-			mutation = new ParameterConstrains(0.1, 1.1, 0.5, 0.1);
-			crossover = new ParameterConstrains(0.1, 1.1, 0.9, 0.1);
-		}
-		else if (functionId == 8) {
-			mutation = new ParameterConstrains(0.001, 1.1, 0.5, 0.1);
-			crossover = new ParameterConstrains(1.0, 1.1, 0.9, 0.1);
-		}
-		else {
-			mutation = new ParameterConstrains(0.15, 1.1, 0.5, 0.1);
-			crossover = new ParameterConstrains(0.0, 1.1, 0.9, 0.1);
-		}
-
-		alg = new jDE100v2(functions[functionId], *mutation, *crossover);
-		for (size_t ii = 1; ii <= numberOfRuns; ii++) {
-			cout << BLUE_START << "----------------- Starting testing for run " << setw(2) << ii << " with function " << COLOR_END;
-			cout << RED_START << functions[functionId].getName() << COLOR_END;
-			cout << BLUE_START << " ----------------- " << COLOR_END << "\n";
-			
-			overallAccuracy += alg->run(ii);
-		}
-	
-		cout << "\nFinally, overall accuracy for " << YELLOW_START << functions[functionId].getName() << COLOR_END << ": ";
-		cout << YELLOW_START << overallAccuracy / (double)(numberOfRuns) << "%" << COLOR_END << "\n\n\n\n";
-
-		delete alg;
-		delete mutation;
-		delete crossover;
+	for (int i = 0; i < 10; i++) {
+		PSO psoTest(functions[6], 1000, 1e7);
+		psoTest.run();
 	}
-
-
-	// Idei de improvement:
-	// unordered_map pentru functii in loc de vectors
-	// problema apare cand sunt prea multe puncte (de obicei dupa 1e10)
 	
 	return 0;
 }

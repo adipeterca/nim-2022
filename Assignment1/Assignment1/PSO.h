@@ -3,20 +3,21 @@
 
 #include <vector>
 #include "Utils.h"
+#include "Function.h"
 
 using namespace std;
 
 // To be refactored later
 // in an abstract class from which each function will derive.
 // Function class -> Rastrigin class
-class Function {
-public:
-	size_t getDimensions() {}
-	double getMin() {}
-	double getMax() {}
-	double operator()(vector<double>& x) {}
-	string getName();
-};
+//class Function {
+//public:
+//	size_t getDimensions() {}
+//	double getMin() {}
+//	double getMax() {}
+//	double operator()(vector<double>& x) {}
+//	string getName();
+//};
 
 
 class PSO {
@@ -28,7 +29,7 @@ private:
 	};
 
 
-	const int populationSize = 100;
+	const int populationSize;
 	
 	vector<Particle> particles;
 
@@ -36,19 +37,33 @@ private:
 	vector<double> populationBest;
 
 	// PSO parameters with default values
-	double cognitiveCoef = 1.5;
-	double socialCoef = 1.5;
-	double inertiaWeight = 0.5;
+	double cognitiveCoef = 2.0;
+	double socialCoef = 2.0;
+	const double inertiaWeight = 0.1;
 
+	// The benchmark function. The algorithm will try and get to the global minimum.
 	Function function;
 
 	// The stopping criterion
-	const int funcEvalMax = 1e7;
+	size_t funcEvalMax;
 public:
-	struct A {};
+	PSO(Function& function, size_t populationSize = 100, size_t funcEvalMax = 1e7) : function(function), populationSize(populationSize), funcEvalMax(funcEvalMax) {
+		for (size_t i = 0; i < populationSize; i++) {
+			particles.push_back(Particle());
+		}
+	}
 
-	void run() {
+	/// <summary>
+	/// Runs the algorithm and updates a local variable called "populationBest".
+	/// </summary>
+	/// <param name="verbose">if true, will print various information to the screen. Defaults to true.</param>
+	void run(bool verbose = true) {
 		
+		if (verbose) {
+			cout << "--------------- Testing for function " << BLUE_START << function.getName() << COLOR_END << " ---------------\n";
+			cout << "Initializing population...\n";
+		}
+
 		double margin = abs(function.getMax() - function.getMin());
 		for (auto& p : particles) {
 			// Randomly initialize the starting position & velocity
@@ -60,12 +75,19 @@ public:
 			
 			// Update swarn's best position
 			// NOTE: it is better if THE VALUE IS LOWER
-			if (function(p.currentPosition) < function(populationBest)) {
+			if (populationBest.size() == 0 || function(p.currentPosition) < function(populationBest)) {
 				populationBest = p.currentPosition;
 			}
 		}
 
-		for (size_t funcEval = 0; funcEval < funcEvalMax; funcEval++) {
+		if (verbose) {
+			cout << "Initial population best value : " << YELLOW_START << function(populationBest) << COLOR_END << "\n";
+		}
+
+		for (size_t funcEval = 0; funcEval < funcEvalMax; funcEval += populationSize) {
+
+			// Was the overall best position updated?
+			bool updatedBest = false;
 			for (auto& p : particles) {
 				// Velocity update
 				for (size_t i = 0; i < function.getDimensions(); i++) {
@@ -82,15 +104,25 @@ public:
 				}
 
 				// Particle best position update
-				if (function(p.currentPosition) > function(p.bestPosition)) {
+				if (function(p.currentPosition) < function(p.bestPosition)) {
 					p.bestPosition = p.currentPosition;
 
 					// Swarn best position update
-					if (function(p.currentPosition) > function(populationBest)) {
+					if (function(p.currentPosition) < function(populationBest)) {
 						populationBest = p.currentPosition;
+						updatedBest = true;
 					}
 				}
 			}
+
+			/*if (verbose && funcEval % 100000 == 0) {
+				cout << "Current evaluations : " << funcEval << "\n";
+				cout << "Best so far : " << YELLOW_START << function(populationBest) << COLOR_END << "\n";
+			}*/
+		}
+
+		if (verbose) {
+			cout << "Final best : " << BLUE_START << function(populationBest) << COLOR_END << "\n\n\n";
 		}
 	}
 };

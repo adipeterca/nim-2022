@@ -34,6 +34,13 @@ public:
 	/// <returns>f(x) (function value)</returns>
 	const double operator ()(const double* x);
 
+	/// <summary>
+	/// Calls function on input
+	/// </summary>
+	/// <param name="x">x vector of coordinates</param>
+	/// <returns>f(x) (function value)</returns>
+	const double operator()(vector<double>& x);
+
 	// Does not work because of #include recurssion
 	// const double operator ()(const Individual& x);
 

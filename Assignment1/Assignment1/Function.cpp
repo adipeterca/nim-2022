@@ -10,6 +10,12 @@ const double Function::operator ()(const double* x) {
 	return returnValue;
 }
 
+const double Function::operator ()(vector<double>& x) {
+	double returnValue;
+	cec19_test_func((double*)x.data(), &returnValue, dimensions, 1, id);
+	return returnValue;
+}
+
 //const double Function::operator ()(const Individual& x) {
 //	double* returnValue = new double;
 //	cec19_test_func((double*)x.get(), returnValue, dimensions, 1, id);
