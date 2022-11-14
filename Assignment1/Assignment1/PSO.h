@@ -57,7 +57,8 @@ public:
 	/// Runs the algorithm and updates a local variable called "populationBest".
 	/// </summary>
 	/// <param name="verbose">if true, will print various information to the screen. Defaults to true.</param>
-	void run(bool verbose = true) {
+	/// <param name="useHillclimber">if true, will use a HCFI on bitstrings to improve the result. Defaults to true.</param>
+	void run(bool verbose = true, bool useHillclimber = true) {
 		
 		if (verbose) {
 			cout << "--------------- Testing for function " << BLUE_START << function.getName() << COLOR_END << " ---------------\n";
@@ -121,8 +122,47 @@ public:
 			}*/
 		}
 
+		if (useHillclimber) {
+			// The following variables are taken from https://profs.info.uaic.ro/~eugennc/teaching/ga/
+			long long int a = long long int(function.getMin());
+			long long int b = long long int(function.getMax());
+			long long int d = 10;
+			long long int N = (b - a) * long long int(pow(10, d));
+			// The requiered number of bits for a single real number
+			long long int n = long long int(ceil(log2(N)));
+
+			// The current best solution is hold in populationBest
+			// So, convert it into a bitstring
+			vector<bool> bitstringBest;
+			vector<bool> currentBitstring;
+			currentBitstring.reserve(n);
+			
+			for (auto value : populationBest) {
+				long long int valueToConvert = (value - a) * (pow(2, n) - 1) / (b - a);
+				currentBitstring.clear();
+				int i = n - 1;
+				while (valueToConvert) {
+						
+				}
+
+				bitstringBest.insert(bitstringBest.end(), currentBitstring.begin(), currentBitstring.end());
+			}
+			
+
+			bool local = false;
+			vector<double> neighbor;
+			while (!local) {
+				// Get the first improved neighbor
+
+				// If none were found, that means we are in a local minimum
+			}
+		}
+
 		if (verbose) {
-			cout << "Final best : " << BLUE_START << function(populationBest) << COLOR_END << "\n\n\n";
+			double result = function(populationBest);
+			cout << "Final best : " << result << " with ";
+			cout << BLUE_START << countCorrectDigits(result) << COLOR_END << " / 10 correct digits.";
+			cout << "\n\n\n";
 		}
 	}
 };
