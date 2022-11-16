@@ -132,7 +132,7 @@ public:
 
 			// How far can a neighbor be?
 			// Can be adjusted to simulate a distance that gets lower and lower (like simulated annealing)
-			double distance = 20;
+			double distance = 50;
 
 			bool local = false;
 			vector<double> neighbor;
@@ -174,7 +174,6 @@ public:
 						// Reset the neighbor
 						neighbor[i] += distance;
 					}
-
 				}
 				
 				// Adjust the distance parameter
