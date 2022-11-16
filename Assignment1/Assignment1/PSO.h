@@ -19,6 +19,40 @@ using namespace std;
 //	string getName();
 //};
 
+//class AbstractPSO {
+//protected:
+//	struct Particle {
+//		vector<double> currentPosition;
+//		vector<double> bestPosition;
+//		vector<double> velocity;
+//	};
+//
+//	const int populationSize;
+//
+//	// Parameter which influences how much the particle's best position influences the particle's next velocity
+//	// Typical values are between [1, 3]
+//	double cognitiveCoef = 2.0;
+//
+//	// Parameter which influences how much the swarn's best position influences the particle's next velocity
+//	// Typical values are between [1, 3]
+//	double socialCoef = 2.0;
+//
+//	// Parameter which influences how much of the particle's current velocity influences the next velocity
+//	const double inertiaWeight = 0.1;
+//
+//	// The benchmark function. The algorithm will try and get to the global minimum.
+//	Function function;
+//
+//	// The stopping criterion
+//	size_t funcEvalMax;
+//public:
+//	/// <summary>
+//	/// Runs the algorithm and updates a local variable called "populationBest".
+//	/// </summary>
+//	/// <param name="verbose">if true, will print various information to the screen. Defaults to true.</param>
+//	virtual void run(bool verbose = true) = 0;
+//};
+
 
 class PSO {
 private:
@@ -28,166 +62,187 @@ private:
 		vector<double> velocity;
 	};
 
+	struct Swarn {
+		vector<Particle> particles;
+		vector<double> bestPosition;
+	};
 
-	const int populationSize;
-	
-	vector<Particle> particles;
+	vector<Swarn> swarns;
 
-	// The swarns best position
-	vector<double> populationBest;
+	vector<double> bestGlobal;
 
-	// PSO parameters with default values
-	double cognitiveCoef = 2.0;
-	double socialCoef = 2.0;
-	const double inertiaWeight = 0.1;
+	// Parameter which influences how much the particle's best position influences the particle's next velocity
+	// Typical values are between [1, 3]
+	double cognitiveCoef = 1.49445;
+
+	// Parameter which influences how much the swarn's best position influences the particle's next velocity
+	// Typical values are between [1, 3]
+	double socialCoef = 1.49445;
+
+	// Parameter which influences how much the global best position influences the particle's next velocity
+	double globalCoef = 0.3645;
+
+	// Parameter which influences how much of the particle's current velocity influences the next velocity
+	const double inertiaWeight = 0.729;
 
 	// The benchmark function. The algorithm will try and get to the global minimum.
 	Function function;
 
 	// The stopping criterion
-	size_t funcEvalMax;
+	const size_t funcEvalMax;
+
+	const size_t numberOfSwarns;
+
+	const size_t swarnSize;
+
 public:
-	PSO(Function& function, size_t populationSize = 100, size_t funcEvalMax = 1e7) : function(function), populationSize(populationSize), funcEvalMax(funcEvalMax) {
-		for (size_t i = 0; i < populationSize; i++) {
-			particles.push_back(Particle());
-		}
-	}
+	PSO(Function& function, size_t numberOfSwarns = 1, size_t swarnSize = 100, size_t funcEvalMax = 1e7) : 
+		function(function), 
+		numberOfSwarns(numberOfSwarns),
+		swarnSize(swarnSize),
+		funcEvalMax(funcEvalMax) {}
 
-	/// <summary>
-	/// Runs the algorithm and updates a local variable called "populationBest".
-	/// </summary>
-	/// <param name="verbose">if true, will print various information to the screen. Defaults to true.</param>
-	/// <param name="useHillclimber">if true, will use a HCFI on bitstrings to improve the result. Defaults to true.</param>
-	void run(bool verbose = true, bool useHillclimber = true) {
-		
+	void run(bool verbose = true) {
 		if (verbose) {
-			cout << "--------------- Testing for function " << BLUE_START << function.getName() << COLOR_END << " ---------------\n";
-			cout << "Initializing population...\n";
+			cout << "--------------- Testing for function ";
+			cout << BLUE_START << function.getName() << COLOR_END;
+			cout << " ---------------\n";
 		}
 
-		double margin = abs(function.getMax() - function.getMin());
-		for (auto& p : particles) {
-			// Randomly initialize the starting position & velocity
-			for (size_t i = 0; i < function.getDimensions(); i++) {
-				p.currentPosition.push_back(getRandomDouble(function.getMin(), function.getMax()));	
-				p.velocity.push_back(getRandomDouble(-margin, margin));
-			}
-			p.bestPosition = p.currentPosition;
+		// Ignore the global coeficient if only 1 swarn (standard PSO) is implemented
+		if (numberOfSwarns == 1) {
+			globalCoef = 0.0;
+		}
+
+		// Create the Swarn objects
+		for (size_t i = 0; i < numberOfSwarns; i++) {
+			swarns.push_back(Swarn());
 			
-			// Update swarn's best position
-			// NOTE: it is better if THE VALUE IS LOWER
-			if (populationBest.size() == 0 || function(p.currentPosition) < function(populationBest)) {
-				populationBest = p.currentPosition;
+			// Create the Particle objects
+			for (size_t j = 0; j < swarnSize; j++) {
+				swarns[i].particles.push_back(Particle());
+			}
+		}
+
+		// Assign default values
+		for (auto& swarn : swarns) {
+			for (auto& particle : swarn.particles) {
+
+				// Velocity constrains
+				double margin = abs(function.getMax() - function.getMin());
+				
+				// Randomly initialize the starting position & velocity
+				for (size_t i = 0; i < function.getDimensions(); i++) {
+					particle.currentPosition.push_back(getRandomDouble(function.getMin(), function.getMax()));
+					particle.velocity.push_back(getRandomDouble(-margin, margin));
+				}
+				particle.bestPosition = particle.currentPosition;
+
+				// Update swarn's best position
+				// NOTE: it is better if THE VALUE IS LOWER
+				double currentValue = function(particle.currentPosition);
+				if (swarn.bestPosition.size() == 0 || currentValue < function(swarn.bestPosition)) {
+					swarn.bestPosition = particle.currentPosition;
+
+					// Update global best position
+					if (bestGlobal.size() == 0 || currentValue < function(bestGlobal)) {
+						bestGlobal = particle.currentPosition;
+					}
+				}
 			}
 		}
 
 		if (verbose) {
-			cout << "Initial population best value : " << YELLOW_START << function(populationBest) << COLOR_END << "\n";
+			cout << "Initial global best value : " << YELLOW_START << function(bestGlobal) << COLOR_END << "\n";
 		}
 
-		for (size_t funcEval = 0; funcEval < funcEvalMax; funcEval += populationSize) {
+		// Variable used for verbose output
+		int currentProc = 0;
+		for (size_t fe = 0; fe < funcEvalMax; fe += numberOfSwarns * swarnSize) {
 
-			// Was the overall best position updated?
-			bool updatedBest = false;
-			for (auto& p : particles) {
-				// Velocity update
-				for (size_t i = 0; i < function.getDimensions(); i++) {
-					double randomCognitive = getRandomDouble(0.0, 1.0);
-					double randomSocial = getRandomDouble(0.0, 1.0);
-
-					p.velocity[i] = inertiaWeight * p.velocity[i] + 
-									cognitiveCoef * randomCognitive * (p.bestPosition[i] - p.currentPosition[i]) + 
-									socialCoef * randomSocial * (populationBest[i] - p.currentPosition[i]);
-				}
-				
-				for (size_t i = 0; i < function.getDimensions(); i++) {
-					p.currentPosition[i] += p.velocity[i];
-				}
-
-				// Particle best position update
-				if (function(p.currentPosition) < function(p.bestPosition)) {
-					p.bestPosition = p.currentPosition;
-
-					// Swarn best position update
-					if (function(p.currentPosition) < function(populationBest)) {
-						populationBest = p.currentPosition;
-						updatedBest = true;
-					}
-				}
-			}
-
-			/*if (verbose && funcEval % 100000 == 0) {
-				cout << "Current evaluations : " << funcEval << "\n";
-				cout << "Best so far : " << YELLOW_START << function(populationBest) << COLOR_END << "\n";
-			}*/
-		}
-
-		if (useHillclimber) {
-			// The current solution is populationBest
 			if (verbose) {
-				double valueCurrent = function(populationBest);
-				cout << "Value before HCBI : " << valueCurrent << "\n";
-				cout << "Corrent number of digits : " << countCorrectDigits(valueCurrent) << "\n";
-			}
-
-			// How far can a neighbor be?
-			// Can be adjusted to simulate a distance that gets lower and lower (like simulated annealing)
-			double distance = 50;
-
-			bool local = false;
-			vector<double> neighbor;
-			double value;
-			double valueBest = function(populationBest);
-			size_t tested = 0;
-
-			while (!local) {
-				// Assume we are in a local minimum
-				local = true;
-
-				// Search for a better neighbor
-				neighbor = populationBest;
-				for (size_t i = 0; i < populationBest.size(); i++) {
-					if (populationBest[i] + distance <= function.getMax()) {
-						neighbor[i] += distance;
-						value = function(neighbor);
-						tested++;
-						if (value < valueBest) {
-							valueBest = value;
-							populationBest = neighbor;
-							local = false;
-						}
-						
-						// Reset the neighbor
-						neighbor[i] -= distance;
-					}
-
-					if (populationBest[i] - distance >= function.getMin()) {
-						neighbor[i] -= distance;
-						value = function(neighbor);
-						tested++;
-						if (value < valueBest) {
-							valueBest = value;
-							populationBest = neighbor;
-							local = false;
-						}
-
-						// Reset the neighbor
-						neighbor[i] += distance;
-					}
+				if (fe >= funcEvalMax * 90 / 100 && currentProc < 90) {
+					cout << YELLOW_START << "90% complete\n" << COLOR_END;
+					currentProc = 90;
 				}
-				
-				// Adjust the distance parameter
-				if (local && distance > 0.000001) {
-					distance -= 0.000001;
-					local = false;
+				else if (fe >= funcEvalMax * 80 / 100 && currentProc < 80) {
+					cout << YELLOW_START << "80% complete\n" << COLOR_END;
+					currentProc = 80;
+				}
+				else if (fe >= funcEvalMax * 70 / 100 && currentProc < 70) {
+					cout << YELLOW_START << "70% complete\n" << COLOR_END;
+					currentProc = 70;
+				}
+				else if (fe >= funcEvalMax * 50 / 100 && currentProc < 50) {
+					cout << YELLOW_START << "50% complete\n" << COLOR_END;
+					currentProc = 50;
+				}
+				else if (fe >= funcEvalMax * 40 / 100 && currentProc < 40) {
+					cout << YELLOW_START << "40% complete\n" << COLOR_END;
+					currentProc = 40;
+				}
+				else if (fe >= funcEvalMax * 30 / 100 && currentProc < 30) {
+					cout << YELLOW_START << "30% complete\n" << COLOR_END;
+					currentProc = 30;
+				}
+				else if (fe >= funcEvalMax * 15 / 100 && currentProc < 15) {
+					cout << YELLOW_START << "15% complete\n" << COLOR_END;
+					currentProc = 15;
+				}
+				else if (fe >= funcEvalMax * 5 / 100 && currentProc < 5) {
+					cout << YELLOW_START << "5% complete\n" << COLOR_END;
+					currentProc = 5;
 				}
 				
 			}
-			cout << "Tested : " << tested << "\n";
+
+			for (auto& swarn : swarns) {
+				for (auto& p : swarn.particles) {
+					// Velocity update
+					for (size_t i = 0; i < function.getDimensions(); i++) {
+						double randomCognitive = getRandomDouble(0.0, 1.0);
+						double randomSocial = getRandomDouble(0.0, 1.0);
+						double randomGlobal = getRandomDouble(0.0, 1.0);
+
+						p.velocity[i] = inertiaWeight * p.velocity[i] +
+							cognitiveCoef * randomCognitive * (p.bestPosition[i] - p.currentPosition[i]) +
+							socialCoef * randomSocial * (swarn.bestPosition[i] - p.currentPosition[i]) +
+							globalCoef * randomGlobal * (bestGlobal[i] - p.currentPosition[i]);
+					}
+
+					for (size_t i = 0; i < function.getDimensions(); i++) {
+						p.currentPosition[i] += p.velocity[i];
+					}
+
+					// Particle best position update
+					double currentValue = function(p.currentPosition);
+					if (currentValue < function(p.bestPosition)) {
+						p.bestPosition = p.currentPosition;
+
+						// Swarn best position update
+						if (currentValue < function(swarn.bestPosition)) {
+							swarn.bestPosition = p.currentPosition;
+
+							// Global best position update
+							if (currentValue < function(bestGlobal)) {
+								bestGlobal = p.currentPosition;
+								if (countCorrectDigits(currentValue) == 10) {
+									if (verbose) {
+										cout << "Found ";
+										cout << RED_START << " perfect value " << COLOR_END;
+										cout << "(10 / 10 correct digits) at FE " << setw(10) << fe << " / " << funcEvalMax << "\n";
+									}
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 
 		if (verbose) {
-			double result = function(populationBest);
+			double result = function(bestGlobal);
 			cout << "Final best : " << result << " with ";
 			cout << BLUE_START << countCorrectDigits(result) << COLOR_END << " / 10 correct digits.";
 			cout << "\n\n\n";
