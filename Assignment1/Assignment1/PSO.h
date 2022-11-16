@@ -123,39 +123,68 @@ public:
 		}
 
 		if (useHillclimber) {
-			// The following variables are taken from https://profs.info.uaic.ro/~eugennc/teaching/ga/
-			long long int a = long long int(function.getMin());
-			long long int b = long long int(function.getMax());
-			long long int d = 10;
-			long long int N = (b - a) * long long int(pow(10, d));
-			// The requiered number of bits for a single real number
-			long long int n = long long int(ceil(log2(N)));
-
-			// The current best solution is hold in populationBest
-			// So, convert it into a bitstring
-			vector<bool> bitstringBest;
-			vector<bool> currentBitstring;
-			currentBitstring.reserve(n);
-			
-			for (auto value : populationBest) {
-				long long int valueToConvert = (value - a) * (pow(2, n) - 1) / (b - a);
-				currentBitstring.clear();
-				int i = n - 1;
-				while (valueToConvert) {
-						
-				}
-
-				bitstringBest.insert(bitstringBest.end(), currentBitstring.begin(), currentBitstring.end());
+			// The current solution is populationBest
+			if (verbose) {
+				double valueCurrent = function(populationBest);
+				cout << "Value before HCBI : " << valueCurrent << "\n";
+				cout << "Corrent number of digits : " << countCorrectDigits(valueCurrent) << "\n";
 			}
-			
+
+			// How far can a neighbor be?
+			// Can be adjusted to simulate a distance that gets lower and lower (like simulated annealing)
+			double distance = 20;
 
 			bool local = false;
 			vector<double> neighbor;
-			while (!local) {
-				// Get the first improved neighbor
+			double value;
+			double valueBest = function(populationBest);
+			size_t tested = 0;
 
-				// If none were found, that means we are in a local minimum
+			while (!local) {
+				// Assume we are in a local minimum
+				local = true;
+
+				// Search for a better neighbor
+				neighbor = populationBest;
+				for (size_t i = 0; i < populationBest.size(); i++) {
+					if (populationBest[i] + distance <= function.getMax()) {
+						neighbor[i] += distance;
+						value = function(neighbor);
+						tested++;
+						if (value < valueBest) {
+							valueBest = value;
+							populationBest = neighbor;
+							local = false;
+						}
+						
+						// Reset the neighbor
+						neighbor[i] -= distance;
+					}
+
+					if (populationBest[i] - distance >= function.getMin()) {
+						neighbor[i] -= distance;
+						value = function(neighbor);
+						tested++;
+						if (value < valueBest) {
+							valueBest = value;
+							populationBest = neighbor;
+							local = false;
+						}
+
+						// Reset the neighbor
+						neighbor[i] += distance;
+					}
+
+				}
+				
+				// Adjust the distance parameter
+				if (local && distance > 0.000001) {
+					distance -= 0.000001;
+					local = false;
+				}
+				
 			}
+			cout << "Tested : " << tested << "\n";
 		}
 
 		if (verbose) {

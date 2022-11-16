@@ -33,7 +33,7 @@ int main()
 	functions.push_back(Function("Ackely", 10, 10, -100, 100)); // 1
 	
 	for (int i = 0; i < 10; i++) {
-		PSO psoTest(functions[6], 1000, 1e7);
+		PSO psoTest(functions[3], 1000, 1e7);
 		psoTest.run();
 	}
 	
