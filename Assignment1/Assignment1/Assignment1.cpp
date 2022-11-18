@@ -38,9 +38,15 @@ int main()
 	// global coef : 0.3645
 	// inertia weight : 0.729
 	// maxFE: 1e8 (neatins)
-	for (int i = 0; i < 10; i++) {
-		PSO psoTest(functions[9], 100, 100, 1e8);
-		psoTest.run();
+	vector<double> result;
+	for (double i = 0; i <= 3; i += 0.3) {
+
+		PSO psoTest(functions[4], 100, 100, 1e8);
+		psoTest.setSocialCoefficient(i);
+		cout << "Running test with SOCIAL COEFICENT = " << i << "\n";
+		result = psoTest.run(false);
+		cout << "Result: " << functions[4](result) << "\n";
+		cout << "Correct digits: " << countCorrectDigits(functions[4](result)) << "\n\n";
 	}
 	
 	return 0;

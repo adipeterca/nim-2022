@@ -83,7 +83,7 @@ private:
 	double globalCoef = 0.3645;
 
 	// Parameter which influences how much of the particle's current velocity influences the next velocity
-	const double inertiaWeight = 0.729;
+	double inertiaWeight = 0.729;
 
 	// The benchmark function. The algorithm will try and get to the global minimum.
 	Function function;
@@ -102,7 +102,23 @@ public:
 		swarnSize(swarnSize),
 		funcEvalMax(funcEvalMax) {}
 
-	void run(bool verbose = true) {
+	void setCognitiveCoefficient(double value) {
+		cognitiveCoef = value;
+	}
+
+	void setSocialCoefficient(double value) {
+		socialCoef = value;
+	}
+
+	void setGlobalCoefficient(double value) {
+		globalCoef = value;
+	}
+
+	void setInertiaWeight(double value) {
+		inertiaWeight = value;
+	}
+
+	vector<double>& run(bool verbose = true) {
 		if (verbose) {
 			cout << "--------------- Testing for function ";
 			cout << BLUE_START << function.getName() << COLOR_END;
@@ -232,7 +248,7 @@ public:
 										cout << RED_START << " perfect value " << COLOR_END;
 										cout << "(10 / 10 correct digits) at FE " << setw(10) << fe << " / " << funcEvalMax << "\n";
 									}
-									return;
+									return bestGlobal;
 								}
 							}
 						}
@@ -247,6 +263,8 @@ public:
 			cout << BLUE_START << countCorrectDigits(result) << COLOR_END << " / 10 correct digits.";
 			cout << "\n\n\n";
 		}
+
+		return bestGlobal;
 	}
 };
 
