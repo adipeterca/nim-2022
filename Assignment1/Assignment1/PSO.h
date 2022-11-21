@@ -95,6 +95,8 @@ private:
 
 	const size_t swarnSize;
 
+	bool alreadyRun = false;
+
 public:
 	PSO(Function& function, size_t numberOfSwarns = 1, size_t swarnSize = 100, size_t funcEvalMax = 1e7) : 
 		function(function), 
@@ -119,6 +121,19 @@ public:
 	}
 
 	vector<double>& run(bool verbose = true) {
+		// Clear any past values
+		// DO NOT count on this measure! Run each PSO instance only ONCE!
+		// This will only clear the -swarns- variable, but each individual swarn
+		// may still hold values (which will clog up the RAM space) - needs testing
+		swarns.clear();
+		bestGlobal.clear();
+		
+
+		if (alreadyRun) {
+			cout << RED_START <<"WARNING! Running a PSO instance more than once!\n" << COLOR_END;
+		}
+		alreadyRun = true;
+
 		if (verbose) {
 			cout << "--------------- Testing for function ";
 			cout << BLUE_START << function.getName() << COLOR_END;
