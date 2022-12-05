@@ -414,6 +414,7 @@ inline void sr_func(double* x, double* sr_x, int nx, double* Os, double* Mr, dou
 			{
 				sr_x[i] = sr_x[i] * sh_rate;
 			}
+			printf("1 0 ---------------------------------------------\n");
 		}
 	}
 	else
@@ -426,12 +427,15 @@ inline void sr_func(double* x, double* sr_x, int nx, double* Os, double* Mr, dou
 				y[i] = x[i] * sh_rate;
 			}
 			rotatefunc(y, sr_x, nx, Mr);
+			printf("0 1---------------------------------------------\\n");
 		}
-		else
+		else {
 			for (i = 0; i < nx; i++)//shrink to the orginal search range
 			{
 				sr_x[i] = x[i] * sh_rate;
 			}
+			printf("0 0---------------------------------------------\\n");
+		}
 	}
 }
 
@@ -614,8 +618,9 @@ inline void Chebyshev(double* x, int D, double* f)  // Storn's Tchebychev - a 2n
 		for (j = 1; j < D; j++)
 			px = y * px + x[j];
 
-		if (px < -1 || px > 1) 
+		if (px < -1 || px > 1) {
 			sum += (1. - fabs(px)) * (1. - fabs(px));
+		}
 		y += dy;
 	}
 
@@ -630,5 +635,4 @@ inline void Chebyshev(double* x, int D, double* f)  // Storn's Tchebychev - a 2n
 	}
 
 	f[0] += sum;
-
 }
