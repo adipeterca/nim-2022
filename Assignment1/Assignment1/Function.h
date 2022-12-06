@@ -213,4 +213,119 @@ public:
 	}
 };
 
+class Weierstrass : public AbstractFunction {
+public:
+	Weierstrass(size_t functionNumber, size_t dimensions, double shrinkRate) : AbstractFunction(functionNumber, dimensions, shrinkRate) {
+
+	}
+
+	double operator()(vector<double> point) final {
+		int k_max;
+		double sum, sum2, a, b, result;
+		a = 0.5;
+		b = 3.0;
+		k_max = 20;
+		result = 0.0;
+		shiftAndRotate(point);
+
+		for (int i = 0; i < point.size(); ++i) {
+			sum = 0.0;
+			sum2 = 0.0;
+			for (int j = 0; j <= k_max; ++j)
+			{
+				sum += pow(a, j) * cos(2.0 * PI * pow(b, j) * (point[i] + 0.5));
+				sum2 += pow(a, j) * cos(2.0 * PI * pow(b, j) * 0.5);
+			}
+			result += sum;
+		}
+		result -= point.size() * sum2;
+
+		return result + 1;
+	}
+};
+
+class Ackley : public AbstractFunction {
+public:
+	Ackley(size_t functionNumber, size_t dimensions, double shrinkRate) : AbstractFunction(functionNumber, dimensions, shrinkRate) {
+
+	}
+
+	double operator()(vector<double> point) final {
+		double result = 0.0, sum1 = 0.0, sum2 = 0.0;
+		shiftAndRotate(point);
+
+		for (int i = 0; i < point.size(); ++i) {
+			sum1 += point[i] * point[i];
+			sum2 += cos(2.0 * PI * point[i]);
+		}
+		sum1 = -0.2 * sqrt(sum1 / point.size());
+		sum2 /= point.size();
+		result = E - 20.0 * exp(sum1) - exp(sum2) + 20.0;
+		return result + 1;
+	}
+};
+
+class Griewank : public AbstractFunction {
+public:
+	Griewank(size_t functionNumber, size_t dimensions, double shrinkRate) : AbstractFunction(functionNumber, dimensions, shrinkRate) {
+
+	}
+
+	double operator()(vector<double> point) final {
+		double result = 0.0, s = 0.0, p = 1.0;
+		shiftAndRotate(point);
+
+		for (int i = 0; i < point.size(); ++i) {
+			s += point[i] * point[i];
+			p *= cos(point[i] / sqrt(1.0 + i));
+		}
+		result = 1.0 + s / 4000.0 - p;
+		return result + 1;
+	}
+};
+
+class HappyCat : public AbstractFunction {
+public:
+	HappyCat(size_t functionNumber, size_t dimensions, double shrinkRate) : AbstractFunction(functionNumber, dimensions, shrinkRate) {
+
+	}
+
+	double operator()(vector<double> point) final {
+		double result = 0.0, alpha = 1.0 / 8.0, r2 = 0.0, sum_z = 0.0;
+		shiftAndRotate(point);
+
+		for (int i = 0; i < point.size(); ++i) {
+			point[i] = point[i] - 1.0;//shift to orgin
+			r2 += point[i] * point[i];
+			sum_z += point[i];
+		}
+		result = pow(fabs(r2 - point.size()), 2 * alpha) + (0.5 * r2 + sum_z) / point.size() + 0.5;
+		return result + 1;
+	}
+};
+
+class Escaffer6 : public AbstractFunction {
+public:
+	Escaffer6(size_t functionNumber, size_t dimensions, double shrinkRate) : AbstractFunction(functionNumber, dimensions, shrinkRate) {
+
+	}
+
+	double operator()(vector<double> point) final {
+		double result = 0.0, temp1, temp2;
+		shiftAndRotate(point);
+
+		for (int i = 0; i < point.size() - 1; ++i) {
+			temp1 = sin(sqrt(point[i] * point[i] + point[i + 1] * point[i + 1]));
+			temp1 = temp1 * temp1;
+			temp2 = 1.0 + 0.001 * (point[i] * point[i] + point[i + 1] * point[i + 1]);
+			result += 0.5 + (temp1 - 0.5) / (temp2 * temp2);
+		}
+		temp1 = sin(sqrt(point[point.size() - 1] * point[point.size() - 1] + point[0] * point[0]));
+		temp1 = temp1 * temp1;
+		temp2 = 1.0 + 0.001 * (point[point.size() - 1] * point[point.size() - 1] + point[0] * point[0]);
+		result += 0.5 + (temp1 - 0.5) / (temp2 * temp2);
+		return result + 1;
+	}
+};
+
 #endif
