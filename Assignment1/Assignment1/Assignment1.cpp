@@ -22,31 +22,35 @@ int main()
 
 	vector<Function> functions; // difficulty ranking
 	functions.push_back(Function("Ackely", 10, 10, -100, 100)); // 1 done
-	functions.push_back(Function("Chebyshev", 1, 9, -8192, 8192)); // 2 done?
+	functions.push_back(Function("Chebyshev", 1, 9, -8192, 8192)); // 2 done
 	functions.push_back(Function("Weierstrass", 6, 10, -100, 100)); // 3 done
 	functions.push_back(Function("Griewank", 5, 10, -100, 100)); // 4 done
 	functions.push_back(Function("Rastrigin", 4, 10, -100, 100)); // 5 done
-	functions.push_back(Function("Lennard Jones", 3, 18, -4, 4)); // 6
-	functions.push_back(Function("Hilbert", 2, 16, -16384, 16384)); // 7
-	functions.push_back(Function("Schwefel", 7, 10, -100, 100));// 8
+	functions.push_back(Function("Lennard Jones", 3, 18, -4, 4)); // 6 done
+	functions.push_back(Function("Hilbert", 2, 16, -16384, 16384)); // 7 done
+	functions.push_back(Function("Schwefel", 7, 10, -100, 100));// 8 done
 	functions.push_back(Function("Escaffer 6", 8, 10, -100, 100)); // 9 done
 	functions.push_back(Function("Happy Cat", 9, 10, -100, 100)); // 10 done
 
-	class Rastrigin r(4, 10, 5.12 / 100.0);
-	class Weierstrass w(6, 10, 0.5 / 100.0);
-	class Ackley ack(10, 10, 1.0);
-	class Griewank g(5, 10, 600.0 / 100.0);
-	class HappyCat h(9, 10, 5.0 / 100.0);
-	class Escaffer6 e(8, 10, 1.0);
+	class Ackley ackley(10, 10, 1.0);
+	class Chebyshev chebyshev(1, 9, 1.0);
+	class Weierstrass weierstrass(6, 10, 0.5 / 100.0);
+	class Griewank griewank(5, 10, 600.0 / 100.0);
+	class Rastrigin rastrigin(4, 10, 5.12 / 100.0);
+	class LennardJones lennardJones(3, 18, 1.0);
+	class Hilbert hilbert(2, 16, 1.0);
+	class Schwefel schwefel(7, 10, 1000.0 / 100.0);
+	class Escaffer6 escaffer6(8, 10, 1.0);
+	class HappyCat happyCat(9, 10, 5.0 / 100.0);
 	vector<double> point;
 	point.resize(10);
 	int count = 0;
 	for (int i = 0; i < 100000; i++) {
 		for (int j = 0; j < 10; j++)
 			point[j] = getRandomDouble(-100, 100);
-		
-		double a = functions[8](point);
-		double b = e(point);
+
+		double a = functions[6](point);
+		double b = hilbert(point);
 		if (a - b == 0) {
 			count++;
 		}

@@ -27,7 +27,7 @@ public:
 	/// <param name="D">number of dimensions</param>
 	/// <param name="min">function minima</param>
 	/// <param name="max">function maxima</param>
-	Function(const char * name, const int &id, const int &D, const double &min, const double &max);
+	Function(const char* name, const int& id, const int& D, const double& min, const double& max);
 
 	/// <summary>
 	/// Calls function on input
@@ -73,7 +73,7 @@ protected:
 		if (point.size() != dimensions) {
 			throw invalid_argument("Point size and function's dimensions don't match!");
 		}
-		
+
 		// Shift value
 		for (size_t i = 0; i < point.size(); ++i) {
 			point[i] -= OShift[i];
@@ -97,12 +97,12 @@ protected:
 		point = rotatedPoint;
 	}
 public:
-	
+
 	const double INF = 1.0e99;
 	const double EPS = 1.0e-14;
 	const double E = 2.7182818284590452353602874713526625;
 	const double PI = 3.1415926535897932384626433832795029;
-	
+
 	AbstractFunction(size_t functionNumber, size_t dimensions, double shrinkRate) {
 		if (functionNumber > 10) {
 			throw invalid_argument("Function number must be lower that 11.");
@@ -325,6 +325,143 @@ public:
 		temp2 = 1.0 + 0.001 * (point[point.size() - 1] * point[point.size() - 1] + point[0] * point[0]);
 		result += 0.5 + (temp1 - 0.5) / (temp2 * temp2);
 		return result + 1;
+	}
+};
+
+class Schwefel : public AbstractFunction {
+public:
+	Schwefel(size_t functionNumber, size_t dimensions, double shrinkRate) : AbstractFunction(functionNumber, dimensions, shrinkRate) {
+
+	}
+
+	double operator()(vector<double> point) final {
+		double result = 0.0, tmp;
+		shiftAndRotate(point);
+
+		for (int i = 0; i < point.size(); ++i) {
+			point[i] += 4.209687462275036e+002;
+			if (point[i] > 500)
+			{
+				result -= (500.0 - fmod(point[i], 500)) * sin(pow(500.0 - fmod(point[i], 500), 0.5));
+				tmp = (point[i] - 500.0) / 100;
+				result += tmp * tmp / point.size();
+			}
+			else if (point[i] < -500)
+			{
+				result -= (-500.0 + fmod(fabs(point[i]), 500)) * sin(pow(500.0 - fmod(fabs(point[i]), 500), 0.5));
+				tmp = (point[i] + 500.0) / 100;
+				result += tmp * tmp / point.size();
+			}
+			else
+				result -= point[i] * sin(pow(fabs(point[i]), 0.5));
+		}
+		result += 4.189828872724338e+002 * point.size();
+		return result + 1;
+	}
+};
+
+class LennardJones : public AbstractFunction {
+public:
+	LennardJones(size_t functionNumber, size_t dimensions, double shrinkRate) : AbstractFunction(functionNumber, dimensions, shrinkRate) {
+
+	}
+
+	double operator()(vector<double> point) final {
+		double result = 0.0;
+		/* valid for any dimension, D=3*k, k=2,3,4,...,25.   k is the number of atoms in 3-D space
+	constraints: unconstrained
+	type: multi-modal with one global minimum; non-separable
+	initial upper bound = 4, initial lower bound = -4
+	value-to-reach = minima[k-2]+.0001
+	f(x*) = minima[k-2]; see array of minima below; additional minima available at the
+	Cambridge cluster database: http://www-wales.ch.cam.ac.uk/~jon/structures/LJ/tables.150.html
+	*/
+		int i, j, k, a, b, D;
+		long double xd, yd, zd, ed, ud, sum = 0;
+
+
+		static double minima[] = { -1.,-3.,-6.,-9.103852,-12.712062,-16.505384,-19.821489,-24.113360,
+			-28.422532,-32.765970,-37.967600,-44.326801,-47.845157,-52.322627,-56.815742,-61.317995,
+			-66.530949,-72.659782,-77.1777043,-81.684571,-86.809782,-02.844472,-97.348815,-102.372663 };
+
+		k = point.size() / 3;
+
+		if (k < 2)  // default if k<2
+		{
+			k = 2;
+		}
+
+		for (i = 0; i < k - 1; i++)
+		{
+			for (j = i + 1; j < k; j++)
+			{
+				a = 3 * i;
+				b = 3 * j;
+				xd = point[a] - point[b];
+				yd = point[a + 1] - point[b + 1];
+				zd = point[a + 2] - point[b + 2];
+				ed = xd * xd + yd * yd + zd * zd;
+				ud = ed * ed * ed;
+				if (ud > 1.0e-10) sum += (1.0 / ud - 2.0) / ud;
+				else sum += 1.0e20;
+			}
+		}
+
+		result += sum;
+		result += 12.7120622568;
+		return result + 1.0;
+	}
+};
+
+class Hilbert : public AbstractFunction {
+public:
+	Hilbert(size_t functionNumber, size_t dimensions, double shrinkRate) : AbstractFunction(functionNumber, dimensions, shrinkRate) {
+
+	}
+
+	double operator()(vector<double> point) final {
+		double result = 0.0;
+		int i, j, k, b;
+
+		long double sum = 0;
+
+		static long double hilbert[10][10], y[10][10];			// Increase matrix size if D > 100
+
+		b = (int)sqrt((double)point.size());
+
+		for (i = 0; i < b; i++)
+		{
+			for (j = 0; j < b; j++)
+			{
+				hilbert[i][j] = 1. / (double)(i + j + 1);		// Create a static Hilbert matrix
+			}
+		}
+
+		for (j = 0; j < b; j++)
+		{
+			for (k = 0; k < b; k++)
+			{
+				y[j][k] = 0;
+				for (i = 0; i < b; i++)
+				{
+					y[j][k] += hilbert[j][i] * point[k + b * i];		// Compute matrix product H*x
+				}
+			}
+		}
+
+
+		for (i = 0; i < b; i++)
+		{
+			for (j = 0; j < b; j++)
+			{
+				if (i == j) sum += fabs(y[i][j] - 1);				// Sum absolute value of deviations
+				else sum += fabs(y[i][j]);
+			}
+		}
+
+		result += sum;
+
+		return result + 1.0;
 	}
 };
 
