@@ -454,6 +454,7 @@ FodyWeavers.xsd
 
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
+Assignment1/Assignment1/Assignment1.vcxproj
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,windows,visualstudio
 
