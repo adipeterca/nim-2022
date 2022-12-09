@@ -551,7 +551,6 @@ inline void Hilbert(double* x, int D, double* f)  // find the inverse of the (il
 
 	b = (int)sqrt((double)D);
 
-
 	for (i = 0; i < b; i++)
 	{
 		for (j = 0; j < b; j++)

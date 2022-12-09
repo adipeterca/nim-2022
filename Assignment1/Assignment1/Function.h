@@ -421,28 +421,26 @@ public:
 
 	double operator()(vector<double> point) final {
 		double result = 0.0;
-		int i, j, k, b;
+		long long b;
 
-		long double sum = 0;
+		long double hilbert[10][10], y[10][10];			// Increase matrix size if D > 100
 
-		static long double hilbert[10][10], y[10][10];			// Increase matrix size if D > 100
+		b = (long long)sqrt((double)point.size());
 
-		b = (int)sqrt((double)point.size());
-
-		for (i = 0; i < b; i++)
+		for (size_t i = 0; i < b; i++)
 		{
-			for (j = 0; j < b; j++)
+			for (size_t j = 0; j < b; j++)
 			{
 				hilbert[i][j] = 1. / (double)(i + j + 1);		// Create a static Hilbert matrix
 			}
 		}
 
-		for (j = 0; j < b; j++)
+		for (size_t j = 0; j < b; j++)
 		{
-			for (k = 0; k < b; k++)
+			for (size_t k = 0; k < b; k++)
 			{
 				y[j][k] = 0;
-				for (i = 0; i < b; i++)
+				for (size_t i = 0; i < b; i++)
 				{
 					y[j][k] += hilbert[j][i] * point[k + b * i];		// Compute matrix product H*x
 				}
@@ -450,16 +448,14 @@ public:
 		}
 
 
-		for (i = 0; i < b; i++)
+		for (size_t i = 0; i < b; i++)
 		{
-			for (j = 0; j < b; j++)
+			for (size_t j = 0; j < b; j++)
 			{
-				if (i == j) sum += fabs(y[i][j] - 1);				// Sum absolute value of deviations
-				else sum += fabs(y[i][j]);
+				if (i == j) result += fabs(y[i][j] - 1);				// Sum absolute value of deviations
+				else result += fabs(y[i][j]);
 			}
 		}
-
-		result += sum;
 
 		return result + 1.0;
 	}

@@ -15,6 +15,28 @@ using namespace std;
 extern double* OShift, * M, * y, * z, * x_bound;
 extern int ini_flag, n_flag, func_flag, * SS;
 
+void test(Function* f1, AbstractFunction* f2) {
+	vector<double> point;
+	point.resize(f1->getDimensions());
+
+	cout << "Evaluating function " << f1->getName() << ":\n";
+	int count = 0;
+	for (int i = 0; i < 100; i++) {
+		for (int j = 0; j < point.size(); j++)
+			point[j] = getRandomDouble(f1->getMin(), f1->getMax());
+
+		double a = (*f1)(point);
+		double b = (*f2)(point);
+		if (a - b == 0) {
+			count++;
+		}
+		else {
+			cout << a << " " << b << "\n";
+		}
+	}
+	cout << count << "\n";
+}
+
 int main()
 {
 	// Settings for cout
@@ -42,22 +64,17 @@ int main()
 	class Schwefel schwefel(7, 10, 1000.0 / 100.0);
 	class Escaffer6 escaffer6(8, 10, 1.0);
 	class HappyCat happyCat(9, 10, 5.0 / 100.0);
-	vector<double> point;
-	point.resize(10);
-	int count = 0;
-	for (int i = 0; i < 100000; i++) {
-		for (int j = 0; j < 10; j++)
-			point[j] = getRandomDouble(-100, 100);
+	
+	//test(&functions[0], &ackley);
+	//test(&functions[1], &chebyshev);
+	//test(&functions[2], &weierstrass);
+	//test(&functions[3], &griewank);
+	//test(&functions[4], &rastrigin);
+	//test(&functions[5], &lennardJones);
+	//test(&functions[6], &hilbert);
+	//test(&functions[7], &schwefel);
+	//test(&functions[8], &escaffer6);
+	test(&functions[9], &happyCat);
 
-		double a = functions[6](point);
-		double b = hilbert(point);
-		if (a - b == 0) {
-			count++;
-		}
-		else {
-			cout << a << " " << b << "\n";
-		}
-	}
-	cout << count;
 	return 0;
 }
