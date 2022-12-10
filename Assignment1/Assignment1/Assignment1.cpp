@@ -4,7 +4,7 @@
 #include <string>
 #include <iomanip>
 #include <chrono>
-#include "cec19_func.h"
+#include <thread>
 #include "Utils.h"
 #include "jDE100v2.h"
 #include "PSO.h"
@@ -12,47 +12,67 @@
 
 using namespace std;
 
-extern double* OShift, * M, * y, * z, * x_bound;
-extern int ini_flag, n_flag, func_flag, * SS;
+class Algorithm {
+protected:
+	const AbstractFunction* function;
+	const double min;
+	const double max;
+	const size_t dimensions;
 
-void test(Function* f1, AbstractFunction* f2) {
-	vector<double> point;
-	point.resize(f1->getDimensions());
+	virtual void singleRun(int x) = 0;
 
-	cout << "Evaluating function " << f1->getName() << ":\n";
-	int count = 0;
-	for (int i = 0; i < 100; i++) {
-		for (int j = 0; j < point.size(); j++)
-			point[j] = getRandomDouble(f1->getMin(), f1->getMax());
+public:
 
-		double a = (*f1)(point);
-		double b = (*f2)(point);
-		if (a - b == 0) {
-			count++;
-		}
-		else {
-			cout << a << " " << b << "\n";
+	Algorithm(AbstractFunction* function, size_t dimensions, double min, double max) : function(function), dimensions(dimensions), min(min), max(max) {
+
+	}
+
+	virtual void run(size_t noThreads) = 0;
+};
+
+class Test : public Algorithm {
+private:
+	void singleRun(int x) override final {
+		for (int i = 0; i < 100; i++) {
+			// Construct an output object to guarantee exclusiveness when printing to stdout
+			string s = "x = " + to_string(x) + " and i = " + to_string(i) + "\n";
+			cout << s;
 		}
 	}
-	cout << count << "\n";
-}
+
+public:
+	Test(AbstractFunction* function, size_t dimensions, double min, double max) : Algorithm(function, dimensions, min, max) {
+
+	}
+
+	void run(size_t noThreads) override final {
+		vector<thread> threads;
+		for (size_t i = 0; i < noThreads; i++) {
+			threads.push_back(thread(&Test::singleRun, this, i));
+		}
+
+		for (size_t i = 0; i < noThreads; i++) {
+			threads[i].join();
+		}
+	}
+};
 
 int main()
 {
 	// Settings for cout
 	cout << fixed << showpoint << setprecision(10);
 
-	vector<Function> functions; // difficulty ranking
-	functions.push_back(Function("Ackely", 10, 10, -100, 100)); // 1 done
-	functions.push_back(Function("Chebyshev", 1, 9, -8192, 8192)); // 2 done
-	functions.push_back(Function("Weierstrass", 6, 10, -100, 100)); // 3 done
-	functions.push_back(Function("Griewank", 5, 10, -100, 100)); // 4 done
-	functions.push_back(Function("Rastrigin", 4, 10, -100, 100)); // 5 done
-	functions.push_back(Function("Lennard Jones", 3, 18, -4, 4)); // 6 done
-	functions.push_back(Function("Hilbert", 2, 16, -16384, 16384)); // 7 done
-	functions.push_back(Function("Schwefel", 7, 10, -100, 100));// 8 done
-	functions.push_back(Function("Escaffer 6", 8, 10, -100, 100)); // 9 done
-	functions.push_back(Function("Happy Cat", 9, 10, -100, 100)); // 10 done
+	//vector<Function> functions; // difficulty ranking
+	//functions.push_back(Function("Ackely", 10, 10, -100, 100)); // 1 done
+	//functions.push_back(Function("Chebyshev", 1, 9, -8192, 8192)); // 2 done
+	//functions.push_back(Function("Weierstrass", 6, 10, -100, 100)); // 3 done
+	//functions.push_back(Function("Griewank", 5, 10, -100, 100)); // 4 done
+	//functions.push_back(Function("Rastrigin", 4, 10, -100, 100)); // 5 done
+	//functions.push_back(Function("Lennard Jones", 3, 18, -4, 4)); // 6 done
+	//functions.push_back(Function("Hilbert", 2, 16, -16384, 16384)); // 7 done
+	//functions.push_back(Function("Schwefel", 7, 10, -100, 100));// 8 done
+	//functions.push_back(Function("Escaffer 6", 8, 10, -100, 100)); // 9 done
+	//functions.push_back(Function("Happy Cat", 9, 10, -100, 100)); // 10 done
 
 	class Ackley ackley(10, 10, 1.0);
 	class Chebyshev chebyshev(1, 9, 1.0);
@@ -64,17 +84,9 @@ int main()
 	class Schwefel schwefel(7, 10, 1000.0 / 100.0);
 	class Escaffer6 escaffer6(8, 10, 1.0);
 	class HappyCat happyCat(9, 10, 5.0 / 100.0);
-	
-	//test(&functions[0], &ackley);
-	//test(&functions[1], &chebyshev);
-	//test(&functions[2], &weierstrass);
-	//test(&functions[3], &griewank);
-	//test(&functions[4], &rastrigin);
-	//test(&functions[5], &lennardJones);
-	//test(&functions[6], &hilbert);
-	//test(&functions[7], &schwefel);
-	//test(&functions[8], &escaffer6);
-	test(&functions[9], &happyCat);
+
+	Test t((AbstractFunction*)(&ackley), 10, -100, 100);
+	t.run(16);
 
 	return 0;
 }

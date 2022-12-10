@@ -10,7 +10,8 @@
 using namespace std;
 
 /// <summary>
-/// Contains all data needed for a function
+/// Contains all data needed for a function.
+/// [DEPRECATED]
 /// </summary>
 class Function
 {
