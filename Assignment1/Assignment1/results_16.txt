@@ -1,0 +1,17 @@
+Number of evaluations: 10000000
+Number of threads: 16
+Number of iterations: 10
+
+Testing function Ackley
+
+
+
+
+
+
+
+
+
+
+Evaluation OLD took 2638.4000000000 milliseconds
+Evaluation NEW took 470.8000000000 milliseconds

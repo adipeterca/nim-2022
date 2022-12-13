@@ -1,2 +1,0 @@
-Similarity percentage hit
-Similarity percentage for small hit
