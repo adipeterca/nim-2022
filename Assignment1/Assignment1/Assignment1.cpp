@@ -173,7 +173,7 @@ int main()
 	class HappyCat happyCat(9, 10, 5.0 / 100.0);
 
 	long double old_sum = 0, new_sum = 0, _old = 0, _new = 0;
-	ofstream fout("results_" + to_string(NO_THREADS) + ".txt");
+	ofstream fout("results_" + to_string(NO_THREADS) + ".txt", std::ios_base::app);
 	fout << fixed << showpoint << setprecision(10);
 	AbstractFunction* f = nullptr;
 	fout << "Number of evaluations: " << NO_EVALS << "\n" << "Number of threads: " << NO_THREADS << "\n" << "Number of iterations: " << NO_ITERATIONS << "\n\n";
